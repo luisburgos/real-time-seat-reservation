@@ -3,7 +3,7 @@ package logic;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-class Client implements ClientRemote {
+public class Client implements ClientRemote {
     public Client() throws RemoteException {
         UnicastRemoteObject.exportObject(this, 0);
     }
