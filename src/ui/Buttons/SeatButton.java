@@ -6,6 +6,8 @@
 package ui.Buttons;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import ui.Util.ButtonStates;
 
@@ -13,7 +15,7 @@ import ui.Util.ButtonStates;
  *
  * @author JoseJulio
  */
-public class SeatButton extends JButton{
+public class SeatButton extends JButton implements ActionListener{
     
     private String currentState;
     private int seatNumber;
@@ -67,6 +69,16 @@ public class SeatButton extends JButton{
     private void OnButtonReserved(){
         System.out.println("Button was reserved");
         super.setBackground(Color.BLUE);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(currentState.equals(ButtonStates.FREE)){
+            changeState(ButtonStates.SELECTED);
+        }
+        else{
+            changeState(ButtonStates.FREE);
+        }
     }
     
 }
