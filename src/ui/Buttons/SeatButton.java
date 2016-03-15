@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import ui.SeatActionsWindow;
 import ui.Util.ButtonStates;
 
 /**
@@ -23,6 +24,7 @@ public class SeatButton extends JButton implements ActionListener{
     public SeatButton(int seatNumber){
         this.seatNumber = seatNumber;
         changeState(ButtonStates.FREE);
+        this.addActionListener(this);
     }
     
     public void changeState(String state){
@@ -73,12 +75,8 @@ public class SeatButton extends JButton implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(currentState.equals(ButtonStates.FREE)){
-            changeState(ButtonStates.SELECTED);
-        }
-        else{
-            changeState(ButtonStates.FREE);
-        }
+        this.changeState(ButtonStates.SELECTED);
+        new SeatActionsWindow(this).setVisible(true);
     }
     
 }
