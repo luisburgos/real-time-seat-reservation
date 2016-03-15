@@ -14,11 +14,14 @@ import ui.Buttons.SeatButton;
  */
 public class ButtonSelectWindow extends javax.swing.JFrame {
 
+    private ButtonSelectWindowController controller;
+    
     /**
      * Creates new form ButtonSelectWindow
      */
     public ButtonSelectWindow() {
         initComponents();
+        controller = new ButtonSelectWindowController(this);
         initSeatGrid();
     }
 
