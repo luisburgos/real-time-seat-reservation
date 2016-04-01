@@ -15,7 +15,7 @@ public class ClientImpl {
         try {
 
             Client client = new Client();
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1");
+            Registry registry = LocateRegistry.getRegistry("192.168.229.231");
 
             ServerRemote server = (ServerRemote) registry.lookup("Server");
             server.registerClient(client);
