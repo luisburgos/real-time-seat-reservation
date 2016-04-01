@@ -1,10 +1,13 @@
 package client;
 
+import domain.Event;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import server.ServerRemote;
 
 /**
@@ -21,6 +24,7 @@ public class ClientImpl {
             ServerRemote server = (ServerRemote) registry.lookup("Server");
             server.registerClient(client);
             server.doSomethingOnClient();
+            ArrayList<Event> events = server.getAllEvents();
 
         } catch (RemoteException e) {
             e.printStackTrace();
