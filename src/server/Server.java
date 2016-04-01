@@ -1,7 +1,7 @@
 package server;
 
 import client.ClientRemote;
-import domain.Event;
+import server.domain.Event;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;

@@ -3,7 +3,7 @@ package server;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import client.ClientRemote;
-import domain.Event;
+import server.domain.Event;
 import java.util.ArrayList;
 
 public interface ServerRemote extends Remote {

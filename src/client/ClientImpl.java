@@ -1,6 +1,6 @@
 package client;
 
-import domain.Event;
+import server.domain.Event;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package data;
+package server.data;
 
-import domain.Event;
+import server.domain.Event;
 import java.sql.*;
 import java.util.*;
 

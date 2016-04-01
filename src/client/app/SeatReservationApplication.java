@@ -5,7 +5,7 @@
  */
 package client.app;
 
-import ui.EventsWindow;
+import client.ui.EventsWindow;
 
 /**
  *

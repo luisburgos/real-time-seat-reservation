@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui.Buttons;
+package client.ui.Buttons;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
-import ui.SeatActionsWindow;
-import ui.Util.ButtonStates;
+import client.ui.SeatActionsWindow;
+import client.ui.Util.ButtonStates;
 
 /**
  *
