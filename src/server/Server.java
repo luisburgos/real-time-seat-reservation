@@ -1,5 +1,6 @@
-package logic;
+package server;
 
+import client.ClientRemote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Vector;
