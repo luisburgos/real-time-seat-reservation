@@ -11,4 +11,30 @@ package domain;
  */
 public class Seat {
     
+    private int id;
+    private int seatNumber;
+    private String state;
+
+    public Seat(){
+        
+    }
+    
+    public int getSeatNumber() {
+        return seatNumber;
+    }
+
+    public void setSeatNumber(int seatNumber) {
+        this.seatNumber = seatNumber;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+    
+    
+    
 }
