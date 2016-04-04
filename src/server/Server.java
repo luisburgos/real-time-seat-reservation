@@ -1,20 +1,30 @@
 package server;
 
+import server.threads.SelectedSeatTask;
+import server.threads.SeatsThreadPool;
 import client.ClientRemote;
 import com.sun.corba.se.spi.activation.Repository;
 import server.domain.Event;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import server.data.EventsRepository;
+import server.threads.SeatThread;
 
 public class Server implements ServerRemote {
     
     public static Vector<ClientRemote> clients;
+    
+    private ClientNotifier mClientNotifier;
+    private SeatsThreadPool mPool;
 
     public Server() throws RemoteException {
         this.clients = new Vector<>();
+        mPool = new SeatsThreadPool(50, 50);
         UnicastRemoteObject.exportObject(this, 0);
     }
 
@@ -40,7 +50,33 @@ public class Server implements ServerRemote {
 
     @Override
     public void selectSeat(int seatNumber) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int eventID = 1;
+        
+        try {
+            mPool.execute(new SelectedSeatTask(eventID, seatNumber, new SeatThread.OnWaitingTimeFinished() {
+                @Override
+                public void onSuccessfullyFinish(int eventID, int seatIndex) {
+                    //mClientNotifier.notifyAll(eventID, seatIndex);
+                    notifyClients(seatIndex, "Free");
+                }
+            }));
+        } catch (Exception ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void notifyClients(int seatIndex, String newState){
+        
+        HashMap newStates = new HashMap<>();
+        newStates.put(seatIndex, newState);
+        
+        for(ClientRemote client : clients){
+            try {
+                client.updateSeatsState(newStates);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @Override
