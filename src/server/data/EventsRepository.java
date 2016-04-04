@@ -76,12 +76,18 @@ public class EventsRepository extends Repository<Event>{
     }
 
     @Override
-    public java.awt.List findByName() {
+    public java.util.List findByName() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public java.awt.List findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public java.util.List findAll() {
+        List list = new ArrayList();
+        
+        for(Event event : EventsRepositoryEndPoint.loadPersistentEvents().values()){
+            list.add(event);
+        }
+        
+        return list;
     }
 }

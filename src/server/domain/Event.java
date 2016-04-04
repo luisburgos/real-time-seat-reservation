@@ -5,13 +5,14 @@
  */
 package server.domain;
 
-import java.sql.Date;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
  * @author luisburgos
  */
-public class Event {
+public class Event implements Serializable{
     
     private int id;
     private String name;

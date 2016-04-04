@@ -4,11 +4,11 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
-public class Client implements ClientRemote {
+public class SeatReservationClient implements ClientRemote {
     
     private SeatStateChangeListener mListener;
     
-    public Client() throws RemoteException {    
+    public SeatReservationClient() throws RemoteException {    
         UnicastRemoteObject.exportObject(this, 0);
     }
 

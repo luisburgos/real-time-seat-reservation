@@ -1,11 +1,13 @@
 package server;
 
 import client.ClientRemote;
+import com.sun.corba.se.spi.activation.Repository;
 import server.domain.Event;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Vector;
+import server.data.EventsRepository;
 
 public class Server implements ServerRemote {
     
@@ -21,7 +23,6 @@ public class Server implements ServerRemote {
         clients.add(client);
         System.out.println("Register new client");
         System.out.println(clients);
-        doSomethingOnClient();
     }
 
     @Override
@@ -59,7 +60,8 @@ public class Server implements ServerRemote {
 
     @Override
     public ArrayList<Event> getAllEvents() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Fetch all events");
+        return (ArrayList<Event>) new EventsRepository().findAll();
     }
 
     @Override

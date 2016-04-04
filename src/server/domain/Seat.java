@@ -5,11 +5,13 @@
  */
 package server.domain;
 
+import java.io.Serializable;
+
 /**
  *
  * @author luisburgos
  */
-public class Seat {
+public class Seat implements Serializable{
     
     private int id;
     private int seatNumber;

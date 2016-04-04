@@ -5,17 +5,40 @@
  */
 package client.ui;
 
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import server.domain.Event;
+
 /**
  *
  * @author JoseJulio
  */
 public class EventsWindow extends javax.swing.JFrame {
 
-    /**
-     * Creates new form EventsWindow
-     */
+    private EventsWindowCotroller mController;
+    private ArrayList<Event> mEventList;
+    
     public EventsWindow() {
         initComponents();
+        mController = new EventsWindowCotroller(this);
+    }
+
+    public EventsWindow(ArrayList<Event> events) {
+        this();
+        mEventList = events;
+        
+        DefaultListModel listModel = new DefaultListModel();
+        for (Event event : mEventList){
+            listModel.addElement(event.getName());
+            System.out.println(event.getName());
+        }
+        
+        eventListView.setModel(listModel);
+        eventListView.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        eventListView.setLayoutOrientation(JList.VERTICAL);
+        eventListView.setVisibleRowCount(-1);
     }
 
     /**
@@ -27,40 +50,17 @@ public class EventsWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        EventButton1 = new javax.swing.JButton();
-        EventButton2 = new javax.swing.JButton();
-        EventButton3 = new javax.swing.JButton();
-        EventButton4 = new javax.swing.JButton();
+        eventListViewScrollPane = new javax.swing.JScrollPane();
+        eventListView = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        EventButton1.setText("Evento1");
-        EventButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EventButton1ActionPerformed(evt);
-            }
+        eventListView.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
         });
-
-        EventButton2.setText("Evento2");
-        EventButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EventButton2ActionPerformed(evt);
-            }
-        });
-
-        EventButton3.setText("Evento3");
-        EventButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EventButton3ActionPerformed(evt);
-            }
-        });
-
-        EventButton4.setText("Evento4");
-        EventButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EventButton4ActionPerformed(evt);
-            }
-        });
+        eventListViewScrollPane.setViewportView(eventListView);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -68,45 +68,19 @@ public class EventsWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(EventButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(EventButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addComponent(EventButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addComponent(EventButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
+                .addComponent(eventListViewScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(EventButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(EventButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(EventButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(EventButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(eventListViewScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void EventButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EventButton1ActionPerformed
-        this.openSeatWindow();
-    }//GEN-LAST:event_EventButton1ActionPerformed
-
-    private void EventButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EventButton2ActionPerformed
-        this.openSeatWindow();
-    }//GEN-LAST:event_EventButton2ActionPerformed
-
-    private void EventButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EventButton3ActionPerformed
-       this.openSeatWindow();
-    }//GEN-LAST:event_EventButton3ActionPerformed
-
-    private void EventButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EventButton4ActionPerformed
-        this.openSeatWindow();
-    }//GEN-LAST:event_EventButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -148,9 +122,7 @@ public class EventsWindow extends javax.swing.JFrame {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton EventButton1;
-    private javax.swing.JButton EventButton2;
-    private javax.swing.JButton EventButton3;
-    private javax.swing.JButton EventButton4;
+    private javax.swing.JList<String> eventListView;
+    private javax.swing.JScrollPane eventListViewScrollPane;
     // End of variables declaration//GEN-END:variables
 }

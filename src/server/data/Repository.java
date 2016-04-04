@@ -5,7 +5,7 @@
  */
 package server.data;
 
-import java.awt.List;
+import java.util.List;
 
 /**
  *

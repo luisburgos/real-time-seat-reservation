@@ -6,7 +6,7 @@
 package server.data;
 
 import server.domain.Seat;
-import java.awt.List;
+import java.util.List;
 
 /**
  *
