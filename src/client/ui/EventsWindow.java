@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import server.domain.Event;
 
 /**
  *
  * @author JoseJulio
  */
-public class EventsWindow extends javax.swing.JFrame {
+public class EventsWindow extends javax.swing.JFrame implements ListSelectionListener {
 
     private EventsWindowCotroller mController;
     private ArrayList<Event> mEventList;
@@ -39,6 +41,17 @@ public class EventsWindow extends javax.swing.JFrame {
         eventListView.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         eventListView.setLayoutOrientation(JList.VERTICAL);
         eventListView.setVisibleRowCount(-1);
+        eventListView.addListSelectionListener(this);
+    }
+    
+     //This method is required by ListSelectionListener.
+    public void valueChanged(ListSelectionEvent e) {
+        
+        int rowSelect = eventListView.getSelectedIndex();
+        
+        if(rowSelect != -1){
+            openSeatWindow();
+        }
     }
 
     /**
