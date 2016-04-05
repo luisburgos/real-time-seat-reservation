@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 public class Seat implements Serializable{
     
-    private int id;
+    private int eventId;
     private int seatNumber;
     private String state;
 
@@ -36,7 +36,13 @@ public class Seat implements Serializable{
     public void setState(String state) {
         this.state = state;
     }
+
+    public int getEventId() {
+        return eventId;
+    }
     
-    
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
+    }    
     
 }
