@@ -10,7 +10,7 @@ public final class DBManager {
     public DBManager() {
         //Connect to MS Access
         //_con = getMsAccessConnection();
-        //_con = getFirebirdDBConnection();
+        _con = getMySQLConnection();
     }
 
     //Thread safe instantiate method
@@ -32,7 +32,7 @@ public final class DBManager {
         Connection con = null;
 
         try {
-            String strCon = "jdbc:mysql://127.0.0.1/test?user=rtuser&password=123";
+            String strCon = "jdbc:mysql://127.0.0.1/remoteseat?user=root";
             con = DriverManager.getConnection(strCon);
         } catch (SQLException se){
             System.out.println(se);

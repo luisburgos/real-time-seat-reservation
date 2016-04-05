@@ -76,18 +76,57 @@ public class EventsRepository extends Repository<Event>{
     }
 
     @Override
-    public java.util.List findByName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public java.util.List findByName(int event_id) {
+        ArrayList eventList = new ArrayList();
+        
+        try {
+            String query = "SELECT * FROM evento WHERE event_id=?";
+            Connection con = DBManager.getInstance().getConnection();
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, event_id);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()){
+                Event event = new Event();
+                event.setId(event_id);
+                event.setName(rs.getString("name"));
+                event.setSite(rs.getString("site"));
+                event.setDate(rs.getDate("date"));
+                event.setDescription(rs.getString("description"));
+                eventList.add(event);
+            }
+            
+            pstmt.close();
+        } catch (SQLException se) {
+            System.out.println(se);
+        }
+        return eventList;
     }
 
     @Override
     public java.util.List findAll() {
-        List list = new ArrayList();
+        ArrayList eventList = new ArrayList();
         
-        for(Event event : EventsRepositoryEndPoint.loadPersistentEvents().values()){
-            list.add(event);
+        try {
+            String query = "SELECT * FROM evento ORDER BY event_id";
+            Connection con = DBManager.getInstance().getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            
+            while (rs.next()){
+                Event event = new Event();
+                event.setId(rs.getInt("event_id"));
+                event.setName(rs.getString("name"));
+                event.setSite(rs.getString("site"));
+                event.setDate(rs.getDate("date"));
+                event.setDescription(rs.getString("description"));
+                eventList.add(event);
+            }
+            
+            stmt.close();
+        } catch (SQLException se) {
+            System.out.println(se);
         }
-        
-        return list;
+        return eventList;
     }
 }
