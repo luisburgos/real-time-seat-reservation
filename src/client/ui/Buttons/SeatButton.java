@@ -5,12 +5,14 @@
  */
 package client.ui.Buttons;
 
+import client.SessionControl;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import client.ui.SeatActionsWindow;
 import client.ui.Util.ButtonStates;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -75,8 +77,13 @@ public class SeatButton extends JButton implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        this.changeState(ButtonStates.SELECTED);
-        new SeatActionsWindow(this).setVisible(true);
+        if(this.currentState == ButtonStates.FREE){
+            this.changeState(ButtonStates.SELECTED);
+            SessionControl.getInstance().reserveSeat(this);
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "El asiento no esta disponible");
+        }
     }
     
 }
