@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client.ui;
+package client.ui.windows;
 
-import client.ui.Buttons.SeatButton;
-import client.ui.Util.ButtonStates;
+import client.ui.buttons.SeatButton;
+import client.ui.buttons.ButtonStates;
 
 /**
  *

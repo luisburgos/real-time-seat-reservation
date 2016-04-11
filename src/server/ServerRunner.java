@@ -1,5 +1,6 @@
 package server;
 
+import server.remote.Server;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

@@ -1,8 +1,8 @@
-package server;
+package server.remote;
 
-import server.threads.SelectedSeatTask;
-import server.threads.SeatsThreadPool;
-import client.ClientRemote;
+import server.control.tasks.SelectedSeatTask;
+import server.control.SeatsThreadPool;
+import client.remote.ClientRemote;
 import com.sun.corba.se.spi.activation.Repository;
 import server.domain.Event;
 import java.rmi.RemoteException;
@@ -12,11 +12,12 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.utils.ClientNotifier;
 import server.data.EventsRepository;
 import server.data.EventsRepositoryEndPoint;
-import server.threads.SeatThread;
+import server.control.tasks.SeatTask;
 
-public class Server implements ServerRemote {
+public class Server extends UnicastRemoteObject implements ServerRemote {
     
     public static Vector<ClientRemote> clients;
     
@@ -37,14 +38,6 @@ public class Server implements ServerRemote {
     }
 
     @Override
-    public void doSomethingOnClient() throws RemoteException {
-        for (ClientRemote clientRemote : clients){
-            System.out.println("Doing something on " + clientRemote);
-            clientRemote.doSomething();
-        }
-    }
-
-    @Override
     public void freeSeat(int seatNumber) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -54,7 +47,7 @@ public class Server implements ServerRemote {
         int eventID = 1;
         
         try {
-            mPool.execute(new SelectedSeatTask(eventID, seatNumber, new SeatThread.OnWaitingTimeFinished() {
+            mPool.execute(new SelectedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
                 @Override
                 public void onSuccessfullyFinish(int eventID, int seatIndex) {
                     //mClientNotifier.notifyAll(eventID, seatIndex);
@@ -108,6 +101,11 @@ public class Server implements ServerRemote {
 
     @Override
     public Event getEvent(int eventID) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void joinEventRoom() throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

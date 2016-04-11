@@ -1,4 +1,6 @@
-package client.ui;
+package client.controllers;
+
+import client.ui.windows.ButtonSelectWindow;
 
 /**
  *

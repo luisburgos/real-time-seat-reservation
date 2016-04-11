@@ -3,25 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server.threads;
+package server.control.tasks;
 
 /**
  *
  * @author luisburgos
  */
-public class SelectedSeatTask extends SeatThread {
-          
-    private final static String TAG = "ReservedSeatThread"; 
-    private final static long SLEEP_TIME = 5000;
-    
-  
+public class SelectedSeatTask extends SeatTask {
+
+    private final static String TAG = "SELECTED SEAT";
+    private final static long SLEEP_TIME = 10000;
+
     public SelectedSeatTask(int eventID, int seatNumber) {
         super(TAG, SLEEP_TIME, eventID, seatNumber);
     }
 
     public SelectedSeatTask(int eventID, int seatNumber, OnWaitingTimeFinished listener) {
         this(eventID, seatNumber);
-        setListener(listener);
+        setWaitingFinishListener(listener);
     }
-    
+
 }

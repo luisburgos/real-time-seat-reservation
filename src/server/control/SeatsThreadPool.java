@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server.threads;
+package server.control;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +17,15 @@ import java.util.concurrent.TimeUnit;
  * @author luisburgos
  */
 public class SeatsThreadPool {
-    
+
     private final ExecutorService pool;
 
-    public SeatsThreadPool(int noOfThreads, int maxNoOfTasks){
+    public SeatsThreadPool(int noOfThreads, int maxNoOfTasks) {
         pool = Executors.newFixedThreadPool(maxNoOfTasks);
     }
 
-    public synchronized void  execute(Runnable task) {
+    public synchronized void execute(Runnable task) {
         pool.execute(task);
     }
- 
+
 }

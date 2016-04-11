@@ -3,40 +3,33 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server.threads;
+package server.control.tasks;
 
 /**
  *
  * @author luisburgos
  */
-public class SeatThread implements Runnable {
+public abstract class SeatTask implements Runnable {
 
     private Thread mThread;
-    private String TAG; 
+    private String TAG;
     private long SLEEP_TIME;
-    
+
     private int eventID;
     private int seatIndex;
-    
-    private OnWaitingTimeFinished mListener;   
 
-    public SeatThread(String tag, long time, int eventID, int seatIndex) {       
+    private OnWaitingTimeFinished mListener;
+
+    public SeatTask(String tag, long time, int eventID, int seatIndex) {
         TAG = tag;
         SLEEP_TIME = time;
         this.eventID = eventID;
         this.seatIndex = seatIndex;
-        System.out.println("Creating " + TAG);
-    }
-    
-    public void setListener(OnWaitingTimeFinished listener){
-        mListener = listener;
+        System.out.println("Creating a new " + TAG + " task.");
     }
 
-    @Override
-    public void run() {        
-        System.out.println("Running " + TAG);
-        startWaiting();
-        System.out.println("Thread " + TAG + " exiting.");
+    public void setWaitingFinishListener(OnWaitingTimeFinished listener) {
+        mListener = listener;
     }
 
     public void start() {
@@ -46,10 +39,17 @@ public class SeatThread implements Runnable {
             mThread.start();
         }
     }
+    
+    @Override
+    public void run() {
+        System.out.println("Running " + TAG);
+        startWaiting();
+        System.out.println("Thread " + TAG + " exiting.");
+    }
 
     private void startWaiting() {
         try {
-            System.out.println("Sleeping: " + TAG + " for " + SLEEP_TIME);               
+            System.out.println("Sleeping: " + TAG + " for " + SLEEP_TIME);
             Thread.sleep(SLEEP_TIME);
             mListener.onSuccessfullyFinish(eventID, seatIndex);
         } catch (InterruptedException e) {
@@ -60,5 +60,5 @@ public class SeatThread implements Runnable {
     public interface OnWaitingTimeFinished {
         void onSuccessfullyFinish(int eventID, int seatIndex);
     }
-    
+
 }

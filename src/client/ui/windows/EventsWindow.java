@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client.ui;
+package client.ui.windows;
 
+import client.controllers.EventsWindowCotroller;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;

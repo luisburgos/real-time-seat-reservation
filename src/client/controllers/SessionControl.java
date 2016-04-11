@@ -1,4 +1,4 @@
-package client;
+package client.controllers;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -7,8 +7,8 @@ package client;
  */
 
 
-import client.ui.Buttons.SeatButton;
-import client.ui.Util.ButtonStates;
+import client.ui.buttons.SeatButton;
+import client.ui.buttons.ButtonStates;
 
 /**
  *

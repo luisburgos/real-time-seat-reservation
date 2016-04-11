@@ -1,4 +1,4 @@
-package client;
+package client.remote;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
