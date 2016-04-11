@@ -13,6 +13,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.data.EventsRepository;
+import server.data.EventsRepositoryEndPoint;
 import server.threads.SeatThread;
 
 public class Server implements ServerRemote {
@@ -32,7 +33,7 @@ public class Server implements ServerRemote {
     public void registerClient(ClientRemote client) throws RemoteException {
         clients.add(client);
         System.out.println("Register new client");
-        System.out.println(clients);
+        System.out.println(client);
     }
 
     @Override
@@ -96,7 +97,12 @@ public class Server implements ServerRemote {
 
     @Override
     public ArrayList<Event> getAllEvents() throws RemoteException {
-        System.out.println("Fetch all events");
+        System.out.println("Fetching all events");
+        
+        //For DEBUG 
+        //return new ArrayList<>(EventsRepositoryEndPoint.loadPersistentEvents().values());
+        
+        //UNCOMMENT for PRODUCTION
         return (ArrayList<Event>) new EventsRepository().findAll();
     }
 
