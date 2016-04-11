@@ -21,7 +21,21 @@ public class SeatsRepository extends Repository<Seat> {
 
     @Override
     public int save(Seat entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         int iRet = -1;
+        try {
+            Connection con = DBManager.getInstance().getConnection();
+            String SQL = "INSERT INTO asiento (estado, event_id, number) values(?,?,?)";
+            PreparedStatement pstmt = con.prepareStatement(SQL);
+            pstmt.setString(1, entity.getState());
+            pstmt.setInt(2, entity.getEventId());                       
+            pstmt.setInt(3, entity.getSeatNumber());          
+            
+            iRet = pstmt.executeUpdate();            
+            pstmt.close();
+        } catch (SQLException se) {
+            System.out.println(se);
+        }
+        return iRet;
     }
 
     /**

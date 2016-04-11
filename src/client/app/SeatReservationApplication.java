@@ -23,13 +23,13 @@ import server.domain.Event;
 public class SeatReservationApplication {
     
     private SeatReservationClient mClient;
-    private ServerRemote mServer;
+    public static ServerRemote mServer;
     
     private EventsWindow eventsWindow;
     
     public SeatReservationApplication() throws RemoteException, NotBoundException{
         
-        mClient = new SeatReservationClient();
+        mClient = SeatReservationClient.getInstance();
         Registry registry = LocateRegistry.getRegistry(AppConstants.REGISTRY_IP);
 
         mServer = (ServerRemote) registry.lookup(AppConstants.LOOKUP_SERVER_REMOTE);
@@ -38,6 +38,10 @@ public class SeatReservationApplication {
         ArrayList<Event> events = mServer.getAllEvents();
         
         eventsWindow = new EventsWindow(events);
+    }
+    
+    public static ServerRemote getRemoteRef(){
+        return mServer;
     }
     
     private void start() {

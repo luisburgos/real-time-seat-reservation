@@ -20,6 +20,12 @@ public class Seat implements Serializable{
     public Seat(){
         
     }
+
+    public Seat(int eventID, String state, int seatNumber) {
+        this.eventId = eventID;
+        this.seatNumber = seatNumber;
+        this.state = state;
+    }
     
     public int getSeatNumber() {
         return seatNumber;

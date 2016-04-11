@@ -3,6 +3,7 @@ package server.remote;
 import server.control.tasks.SelectedSeatTask;
 import server.control.SeatsThreadPool;
 import client.remote.ClientRemote;
+import client.ui.buttons.ButtonStates;
 import server.domain.Event;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,6 +16,8 @@ import server.utils.ClientNotifier;
 import server.data.EventsRepository;
 import server.data.EventsRepositoryEndPoint;
 import server.control.tasks.SeatTask;
+import server.data.SeatsRepository;
+import server.domain.Seat;
 
 public class Server implements ServerRemote {
     
@@ -42,15 +45,20 @@ public class Server implements ServerRemote {
     }
 
     @Override
-    public void selectSeat(int seatNumber) throws RemoteException {
-        int eventID = 1;
-        
+    public void selectSeat(int seatNumber) throws RemoteException {       
+        int eventID = 1;              
+        System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
+        Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
         try {
+            new SeatsRepository().update(seat);
             mPool.execute(new SelectedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
                 @Override
                 public void onSuccessfullyFinish(int eventID, int seatIndex) {
                     //mClientNotifier.notifyAll(eventID, seatIndex);
-                    notifyClients(seatIndex, "Free");
+                    System.out.println("Free seat " + seatNumber + " from event " + eventID);
+                    seat.setState(ButtonStates.FREE);
+                    new SeatsRepository().update(seat);                    
+                    notifyClients(seatIndex, "FREE");
                 }
             }));
         } catch (Exception ex) {

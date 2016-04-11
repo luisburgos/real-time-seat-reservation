@@ -6,6 +6,7 @@
 package client.ui.buttons;
 
 import client.controllers.SessionControl;
+import client.ui.windows.ButtonSelectWindow;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +22,7 @@ public class SeatButton extends JButton implements ActionListener{
     
     private String currentState;
     private int seatNumber;
+    private OnStateChangeListener listener;
   
     public SeatButton(int seatNumber){
         this.seatNumber = seatNumber;
@@ -45,6 +47,9 @@ public class SeatButton extends JButton implements ActionListener{
             }
             case ButtonStates.SELECTED: {
                 OnButtonSelected();
+                if(listener != null){
+                    listener.onSelect(seatNumber);
+                }
                 break;
             }
             case ButtonStates.SOLD:{
@@ -52,6 +57,8 @@ public class SeatButton extends JButton implements ActionListener{
                 break;
             }
         }
+        this.revalidate();
+        this.repaint();
     }
     
     private void OnButtonSelected(){
@@ -61,12 +68,12 @@ public class SeatButton extends JButton implements ActionListener{
     
     private void OnButtonFree(){
         System.out.println("Button was set free");
-        super.setBackground(Color.GREEN);
+        super.setBackground(Color.GREEN);        
     }
     
     private void OnButtonSold(){
         System.out.println("Button was sold");
-        super.setBackground(Color.red);
+        super.setBackground(Color.red);      
     }
     
     private void OnButtonReserved(){
@@ -92,5 +99,23 @@ public class SeatButton extends JButton implements ActionListener{
     public int getSeatNumber() {
         return seatNumber;
     }
+
+    public void setStateListener(OnStateChangeListener listener) {
+        this.listener = listener;
+    }
+    
+    public interface OnStateChangeListener {
+        void onSelect(int seatNumber);
+    }
+
+    public void setCurrentState(String currentState) {
+        this.currentState = currentState;
+        updateButton();
+    }
+
+    public void setSeatNumber(int seatNumber) {
+        this.seatNumber = seatNumber;
+    }
+    
     
 }
