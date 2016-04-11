@@ -79,14 +79,16 @@ public class SeatButton extends JButton implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("Execute Action Performed when button is " + currentState);
-        if(this.currentState == ButtonStates.FREE){
-            this.changeState(ButtonStates.SELECTED);            
+        if(currentState.equals(ButtonStates.FREE)){
+            changeState(ButtonStates.SELECTED);            
             if(listener != null){
-                    listener.onSelect(seatNumber);
-                }
-        } else{
+                listener.onSelect(seatNumber);
+            }
+        } else if (currentState.equals(ButtonStates.SELECTED)){
             JOptionPane.showMessageDialog(this, "El asiento "+ seatNumber
                     + " no esta disponible");
+        } else {
+            System.out.println("Else " + currentState);
         }
     }
     
