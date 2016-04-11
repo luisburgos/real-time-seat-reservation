@@ -98,8 +98,8 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void reserveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveButtonActionPerformed
-        for(SeatButton seat : SessionControl.getInstance().getSelectedSeats()){
-            System.out.println(seat.getSeatNumber());
+        for(int seat : SessionControl.getInstance().getSelectedSeats()){
+            System.out.println(seat);
         };
         
         //TODO: Open reserve details window
@@ -143,7 +143,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     private void initSeatGrid(){
         GridLayout layout = new GridLayout(10,5);
         this.buttonPanel.setLayout(layout);
-        for(int i=0; i<50 ; i++){
+        for(int i = 1; i<= 50 ; i++){
             SeatButton button = new SeatButton(i);
             button.setStateListener(this);
             this.buttonPanel.add(button);            
@@ -157,23 +157,27 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     // End of variables declaration//GEN-END:variables
 
     public void onSelect(int seatNumber) {
-        System.out.println("On Select seat " + (seatNumber + 1));
+        System.out.println("On Select seat " + (seatNumber));
         try {
-            SeatReservationClient.getInstance().selectSeat(seatNumber + 1);
+            SessionControl.getInstance().selectSeat(seatNumber);
+            SeatReservationClient.getInstance().selectSeat(seatNumber);
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void updateSeat(Integer seatNumber, String newState) {
-        System.out.println("Update seat " + seatNumber + " with value " + newState);
+        SessionControl.getInstance().setFreeSeat(seatNumber);
+        System.out.println("Update seat " + seatNumber + " with value " + newState);                
         Component component = buttonPanel.getComponent(seatNumber-1);
-        if(component instanceof SeatButton){
-            SeatButton button = (SeatButton) component;
-            button.setCurrentState(newState);
+        if(component instanceof SeatButton){            
+            SeatButton button = (SeatButton) component;       
+            System.out.println("Before change state was " + button.getCurrentState());
+            button.changeState(newState);
+            System.out.println("After change state was " + button.getCurrentState());
             this.revalidate();
             this.repaint();            
             System.out.println("Update UI");
-        }
+        }               
     }
 }

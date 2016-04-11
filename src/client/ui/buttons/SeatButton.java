@@ -46,10 +46,7 @@ public class SeatButton extends JButton implements ActionListener{
                 break;
             }
             case ButtonStates.SELECTED: {
-                OnButtonSelected();
-                if(listener != null){
-                    listener.onSelect(seatNumber);
-                }
+                OnButtonSelected();                
                 break;
             }
             case ButtonStates.SOLD:{
@@ -57,38 +54,39 @@ public class SeatButton extends JButton implements ActionListener{
                 break;
             }
         }
-        this.revalidate();
-        this.repaint();
     }
     
     private void OnButtonSelected(){
-        System.out.println("Button was selected");
+        System.out.println("Button "+ seatNumber + " was selected");
         super.setBackground(Color.GRAY);
     }
     
     private void OnButtonFree(){
-        System.out.println("Button was set free");
+        System.out.println("Button "+ seatNumber + "  was set free");
         super.setBackground(Color.GREEN);        
     }
     
     private void OnButtonSold(){
-        System.out.println("Button was sold");
+        System.out.println("Button "+ seatNumber + "  was sold");
         super.setBackground(Color.red);      
     }
     
     private void OnButtonReserved(){
-        System.out.println("Button was reserved");
+        System.out.println("Button  "+ seatNumber + " was reserved");
         super.setBackground(Color.BLUE);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.println("Execute Action Performed when button is " + currentState);
         if(this.currentState == ButtonStates.FREE){
-            this.changeState(ButtonStates.SELECTED);
-            SessionControl.getInstance().selectSeat(this);
-        }
-        else{
-            JOptionPane.showMessageDialog(this, "El asiento no esta disponible");
+            this.changeState(ButtonStates.SELECTED);            
+            if(listener != null){
+                    listener.onSelect(seatNumber);
+                }
+        } else{
+            JOptionPane.showMessageDialog(this, "El asiento "+ seatNumber
+                    + " no esta disponible");
         }
     }
     

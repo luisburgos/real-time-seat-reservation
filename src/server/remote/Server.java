@@ -6,6 +6,7 @@ import client.remote.ClientRemote;
 import client.ui.buttons.ButtonStates;
 import server.domain.Event;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,24 +20,30 @@ import server.control.tasks.SeatTask;
 import server.data.SeatsRepository;
 import server.domain.Seat;
 
-public class Server implements ServerRemote {
+public class Server extends UnicastRemoteObject implements ServerRemote {
     
+    private static final long serialVersionUID = 11L;
     public static Vector<ClientRemote> clients;
     
     private ClientNotifier mClientNotifier;
     private SeatsThreadPool mPool;
 
     public Server() throws RemoteException {
+        super();
         this.clients = new Vector<>();
         mPool = new SeatsThreadPool(50, 50);
-        UnicastRemoteObject.exportObject(this, 0);
+        //UnicastRemoteObject.exportObject(this, 0);
     }
 
     @Override
     public void registerClient(ClientRemote client) throws RemoteException {
-        clients.add(client);
-        System.out.println("Register new client");
-        System.out.println(client);
+        try {
+            clients.add(client);
+            System.out.println("Register new client from " + getClientHost());
+            System.out.println(client);
+        } catch (ServerNotActiveException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override

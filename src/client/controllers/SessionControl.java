@@ -20,19 +20,22 @@ public class SessionControl {
     private static SessionControl self;
     
     private SeatButton[] reservedSeats;
+    private int[] selectedSeatNumbers;
     private int amountReserved = 0;
+    private int amountSelected = 0;
     
     private SessionControl(){
         reservedSeats = new SeatButton[MAX_SIZE];
+        selectedSeatNumbers = new int[MAX_SIZE];
     }
     
-    public void selectSeat(SeatButton seat){
-        if(amountReserved == MAX_SIZE){
-            reservedSeats[0].changeState(ButtonStates.FREE);
-            amountReserved-=1;
-            changeSeatsOrder();
+    public void selectSeat(int seatNumber){        
+        if(amountSelected == MAX_SIZE){
+            removeSeatFromSelection(0);
         }
-        reservedSeats[amountReserved++] = seat;       
+        selectedSeatNumbers[amountSelected++] = seatNumber;
+        System.out.println("Add seat " + seatNumber + " on position " +
+                amountSelected);
     }
     
     public void reserveSeat(SeatButton seat){
@@ -65,8 +68,24 @@ public class SessionControl {
         }
     }
 
-    public SeatButton[] getSelectedSeats() {
-        return reservedSeats;
+    public int[] getSelectedSeats() {
+        return selectedSeatNumbers;
+    }
+
+    public void setFreeSeat(Integer seatNumber) {
+        for(int i = 0; i < MAX_SIZE; i++){
+            if(selectedSeatNumbers[i] == seatNumber){
+                System.out.println("Remove seat from selection " + i);
+                removeSeatFromSelection(i); 
+                return;
+            }
+        }
+    }
+
+    private void removeSeatFromSelection(int i) {
+        selectedSeatNumbers[i] = 0;
+        amountSelected-=1;
+        changeSeatsOrder();
     }
     
 }

@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author luisburgos
  */
-public class ButtonSelectWindowController implements OnStateChangeListener, SeatStateChangeListener {
+public class ButtonSelectWindowController implements SeatStateChangeListener {
 
     private ButtonSelectWindow selectSeatsWindow;
 
@@ -22,16 +22,6 @@ public class ButtonSelectWindowController implements OnStateChangeListener, Seat
         this.selectSeatsWindow = selectSeatsWindow;
         try {
             SeatReservationClient.getInstance().setSeatStateChangeListener(this);
-        } catch (RemoteException ex) {
-            Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void onSelect(int seatNumber) {
-        System.out.println("On Select");
-        try {
-            SeatReservationClient.getInstance().selectSeat(seatNumber + 1);
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }

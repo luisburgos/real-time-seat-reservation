@@ -2,18 +2,20 @@ package client.remote;
 
 import client.app.SeatReservationApplication;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SeatReservationClient implements ClientRemote {
+public class SeatReservationClient extends UnicastRemoteObject implements ClientRemote {
     
+    private static final long serialVersionUID = 11L;
     private SeatStateChangeListener mListener;
     private static SeatReservationClient instance;
     
     private SeatReservationClient() throws RemoteException {    
-        UnicastRemoteObject.exportObject(this, 0);
+        super();
     }
     
     public static SeatReservationClient getInstance() throws RemoteException {
