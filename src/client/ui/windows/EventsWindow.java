@@ -48,11 +48,14 @@ public class EventsWindow extends javax.swing.JFrame implements ListSelectionLis
      //This method is required by ListSelectionListener.
     public void valueChanged(ListSelectionEvent e) {
         
-        int rowSelect = eventListView.getSelectedIndex();
+        if(!e.getValueIsAdjusting()){
+            int rowSelect = eventListView.getSelectedIndex();
         
-        if(rowSelect != -1){
-            openSeatWindow();
+            if(rowSelect != -1){
+                openSeatWindow();
+            }
         }
+               
     }
 
     /**
@@ -69,11 +72,8 @@ public class EventsWindow extends javax.swing.JFrame implements ListSelectionLis
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        eventListView.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        eventListView.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        eventListView.setAutoscrolls(false);
         eventListViewScrollPane.setViewportView(eventListView);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

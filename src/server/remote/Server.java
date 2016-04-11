@@ -17,7 +17,7 @@ import server.data.EventsRepository;
 import server.data.EventsRepositoryEndPoint;
 import server.control.tasks.SeatTask;
 
-public class Server extends UnicastRemoteObject implements ServerRemote {
+public class Server implements ServerRemote {
     
     public static Vector<ClientRemote> clients;
     
