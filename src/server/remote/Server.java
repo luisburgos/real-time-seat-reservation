@@ -3,7 +3,6 @@ package server.remote;
 import server.control.tasks.SelectedSeatTask;
 import server.control.SeatsThreadPool;
 import client.remote.ClientRemote;
-import com.sun.corba.se.spi.activation.Repository;
 import server.domain.Event;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

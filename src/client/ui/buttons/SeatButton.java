@@ -21,7 +21,7 @@ public class SeatButton extends JButton implements ActionListener{
     
     private String currentState;
     private int seatNumber;
-    
+  
     public SeatButton(int seatNumber){
         this.seatNumber = seatNumber;
         changeState(ButtonStates.FREE);
@@ -78,11 +78,19 @@ public class SeatButton extends JButton implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if(this.currentState == ButtonStates.FREE){
             this.changeState(ButtonStates.SELECTED);
-            SessionControl.getInstance().reserveSeat(this);
+            SessionControl.getInstance().selectSeat(this);
         }
         else{
             JOptionPane.showMessageDialog(this, "El asiento no esta disponible");
         }
+    }
+    
+    public String getCurrentState() {
+        return currentState;
+    }
+
+    public int getSeatNumber() {
+        return seatNumber;
     }
     
 }

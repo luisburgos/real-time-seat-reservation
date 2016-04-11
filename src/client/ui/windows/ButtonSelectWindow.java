@@ -6,6 +6,7 @@
 package client.ui.windows;
 
 import client.controllers.ButtonSelectWindowController;
+import client.controllers.SessionControl;
 import java.awt.GridLayout;
 import client.ui.buttons.SeatButton;
 
@@ -37,6 +38,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame {
 
         buttonPanel = new javax.swing.JPanel();
         exitButton = new javax.swing.JButton();
+        reserveButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -50,6 +52,13 @@ public class ButtonSelectWindow extends javax.swing.JFrame {
             }
         });
 
+        reserveButton.setText("Reserve");
+        reserveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reserveButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -60,7 +69,8 @@ public class ButtonSelectWindow extends javax.swing.JFrame {
                     .addComponent(buttonPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 317, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
+                        .addComponent(reserveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -69,7 +79,9 @@ public class ButtonSelectWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(exitButton, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exitButton, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+                    .addComponent(reserveButton, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -79,6 +91,14 @@ public class ButtonSelectWindow extends javax.swing.JFrame {
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
        this.setVisible(false);
     }//GEN-LAST:event_exitButtonActionPerformed
+
+    private void reserveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveButtonActionPerformed
+        for(SeatButton seat : SessionControl.getInstance().getSelectedSeats()){
+            System.out.println(seat.getSeatNumber());
+        };
+        
+        //TODO: Open reserve details window
+    }//GEN-LAST:event_reserveButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -127,5 +147,6 @@ public class ButtonSelectWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton exitButton;
+    private javax.swing.JButton reserveButton;
     // End of variables declaration//GEN-END:variables
 }

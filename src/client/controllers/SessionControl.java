@@ -26,6 +26,15 @@ public class SessionControl {
         reservedSeats = new SeatButton[MAX_SIZE];
     }
     
+    public void selectSeat(SeatButton seat){
+        if(amountReserved == MAX_SIZE){
+            reservedSeats[0].changeState(ButtonStates.FREE);
+            amountReserved-=1;
+            changeSeatsOrder();
+        }
+        reservedSeats[amountReserved++] = seat;       
+    }
+    
     public void reserveSeat(SeatButton seat){
         if(amountReserved >= MAX_SIZE){
             amountReserved = 0;
@@ -47,6 +56,17 @@ public class SessionControl {
             self = new SessionControl();
         }
         return self;
+    }
+
+    private void changeSeatsOrder() {
+        for(int i = 0; i < amountReserved; i++){
+            SeatButton current = reservedSeats[i+1];
+            reservedSeats[i] = current;
+        }
+    }
+
+    public SeatButton[] getSelectedSeats() {
+        return reservedSeats;
     }
     
 }
