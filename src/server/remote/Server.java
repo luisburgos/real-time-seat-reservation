@@ -55,6 +55,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     public void selectSeat(int seatNumber) throws RemoteException {       
         int eventID = 1;              
         System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
+        notifyClients(seatNumber, ButtonStates.SELECTED);
         Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
         try {
             new SeatsRepository().update(seat);
