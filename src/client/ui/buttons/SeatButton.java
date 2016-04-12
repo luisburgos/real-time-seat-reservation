@@ -88,7 +88,8 @@ public class SeatButton extends JButton implements ActionListener{
             JOptionPane.showMessageDialog(this, "El asiento "+ seatNumber
                     + " no esta disponible");
         } else {
-            System.out.println("Else " + currentState);
+            JOptionPane.showMessageDialog(this, "El asiento "+ seatNumber
+                    + " está reservado");
         }
     }
     

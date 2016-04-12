@@ -1,6 +1,7 @@
 package client.remote;
 
 import client.app.SeatReservationApplication;
+import client.controllers.SessionControl;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
@@ -47,7 +48,16 @@ public class SeatReservationClient extends UnicastRemoteObject implements Client
         } catch (RemoteException ex) {
             Logger.getLogger(SeatReservationClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }  
+    }
+    
+    public void reserveSeats(int[] seatNumbers){
+        try {
+           
+            SeatReservationApplication.getRemoteRef().reserveSeats(seatNumbers);
+        } catch (RemoteException ex) {
+            Logger.getLogger(SeatReservationClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     public interface SeatStateChangeListener {
         void onUpdate(HashMap<Integer, String> newStates);
