@@ -98,9 +98,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void reserveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveButtonActionPerformed
-        for(int seat : SessionControl.getInstance().getSelectedSeats()){
-            System.out.println(seat);
-        };
+        DetailWindow window = new DetailWindow(SessionControl.getInstance().getSelectedSeats());
         
         //TODO: Open reserve details window
     }//GEN-LAST:event_reserveButtonActionPerformed

@@ -5,6 +5,7 @@
  */
 package client.ui.windows;
 
+import client.controllers.SessionControl;
 import client.ui.buttons.SeatButton;
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -18,7 +19,7 @@ public class DetailWindow extends javax.swing.JFrame {
     /**
      * Creates new form DetailWindow
      */
-    public DetailWindow(SeatButton[] selectedButtons) {
+    public DetailWindow(int[] selectedButtons) {
         initComponents();
         buildTable("Ev1",selectedButtons);
     }
@@ -40,8 +41,18 @@ public class DetailWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         buyButton.setText("Comprar");
+        buyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buyButtonActionPerformed(evt);
+            }
+        });
 
         cancelButton.setText("Cancelar");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         detailTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -91,6 +102,14 @@ public class DetailWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
+       SessionControl.getInstance().buySeats();
+    }//GEN-LAST:event_buyButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -128,18 +147,18 @@ public class DetailWindow extends javax.swing.JFrame {
                 sampleButtons[3] = new SeatButton(4);
                 sampleButtons[4] = new SeatButton(5);
                 
-                new DetailWindow(sampleButtons).setVisible(true);
+                //new DetailWindow(sampleButtons).setVisible(true);
             }
         });
     }
 
     
     
-    private void buildTable(String event, SeatButton[] seatNumbers){
+    private void buildTable(String event, int[] seatNumbers){
         TableModel model = detailTable.getModel();
         for(int i=0; i<seatNumbers.length ; i++){
             model.setValueAt(event, i, 0);
-            model.setValueAt(seatNumbers[i].getSeatNumber(), i, 1);
+            model.setValueAt(seatNumbers[i], i, 1);
         }
         detailTable.setModel(model);
     }
