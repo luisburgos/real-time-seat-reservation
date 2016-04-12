@@ -34,7 +34,7 @@ public final class DBManager {
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             String strCon = "jdbc:mysql://127.0.0.1/remoteseat";
-            con = DriverManager.getConnection(strCon, "root", "12345");
+            con = DriverManager.getConnection(strCon, "", "");
         } catch (SQLException se){
             System.out.println(se);
         }

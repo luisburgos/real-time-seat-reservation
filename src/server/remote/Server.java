@@ -19,6 +19,7 @@ import server.data.EventsRepositoryEndPoint;
 import server.control.tasks.SeatTask;
 import server.data.SeatsRepository;
 import server.domain.Seat;
+import server.rooms.EventHandler;
 
 public class Server extends UnicastRemoteObject implements ServerRemote {
     
@@ -27,12 +28,15 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     
     private ClientNotifier mClientNotifier;
     private SeatsThreadPool mPool;
+    
+    public HashMap<Integer, EventHandler> eventsHandler;
 
     public Server() throws RemoteException {
         super();
         this.clients = new Vector<>();
         mPool = new SeatsThreadPool(50, 50);
         //UnicastRemoteObject.exportObject(this, 0);
+        this.eventsHandler = new HashMap();
     }
 
     @Override
@@ -52,8 +56,10 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     }
 
     @Override
-    public void selectSeat(int seatNumber) throws RemoteException {       
-        int eventID = 1;              
+    public void selectSeat(int seatNumber, int eventID) throws RemoteException {   
+        eventID = 1;
+        eventsHandler.get(eventID).selectSeat(seatNumber);
+        /*     
         System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
         Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
         try {
@@ -71,6 +77,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
+                */
     }
     
     private void notifyClients(int seatIndex, String newState){
@@ -107,10 +114,10 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         System.out.println("Fetching all events");
         
         //For DEBUG 
-        //return new ArrayList<>(EventsRepositoryEndPoint.loadPersistentEvents().values());
+        return new ArrayList<>(EventsRepositoryEndPoint.loadPersistentEvents().values());
         
         //UNCOMMENT for PRODUCTION
-        return (ArrayList<Event>) new EventsRepository().findAll();
+        //return (ArrayList<Event>) new EventsRepository().findAll();
     }
 
     @Override
