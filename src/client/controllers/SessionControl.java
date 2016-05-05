@@ -31,12 +31,13 @@ public class SessionControl {
     
     public void selectSeat(int seatNumber){        
         if(amountSelected == MAX_SIZE){
+            System.out.println("Reordering seats...");
             removeSeatFromSelection(0);
         }
         selectedSeatNumbers[amountSelected++] = seatNumber;
         System.out.println("Add seat " + seatNumber + " on position " +
                 amountSelected);
-    }
+    }      
     
     public void reserveSeat(SeatButton seat){
         if(amountReserved >= MAX_SIZE){
@@ -75,7 +76,7 @@ public class SessionControl {
     public void setFreeSeat(Integer seatNumber) {
         for(int i = 0; i < MAX_SIZE; i++){
             if(selectedSeatNumbers[i] == seatNumber){
-                System.out.println("Remove seat from selection " + i);
+                System.out.println("Remove seat "+ seatNumber  + " from position " + i);
                 removeSeatFromSelection(i); 
                 return;
             }

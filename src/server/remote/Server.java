@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.control.tasks.ReservedSeatTask;
 import server.utils.ClientNotifier;
 import server.data.EventsRepository;
 import server.data.EventsRepositoryEndPoint;
@@ -61,6 +62,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         eventsHandler.get(eventID).selectSeat(seatNumber);
         /*     
         System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
+        notifyClients(seatNumber, ButtonStates.SELECTED);
         Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
         try {
             new SeatsRepository().update(seat);
@@ -96,7 +98,29 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
 
     @Override
     public void reserveSeats(int[] seatNumbers) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int eventID = 1;              
+        //System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
+        //notifyClients(seatNumber, ButtonStates.SELECTED);
+        //Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
+        try {           
+            for(int seatNumber : seatNumbers){
+                notifyClients(seatNumber, ButtonStates.RESERVED);
+                Seat seat = new Seat(eventID, ButtonStates.RESERVED, seatNumber);
+                new SeatsRepository().update(seat);
+                mPool.execute(new ReservedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
+                    @Override
+                    public void onSuccessfullyFinish(int eventID, int seatIndex) {
+                        //mClientNotifier.notifyAll(eventID, seatIndex);
+                        System.out.println("Free seat " + seatNumber + " from event " + eventID);
+                        seat.setState(ButtonStates.FREE);
+                        new SeatsRepository().update(seat);                    
+                        notifyClients(seatNumber, "FREE");
+                    }
+                }));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
