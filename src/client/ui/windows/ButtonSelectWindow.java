@@ -8,6 +8,7 @@ package client.ui.windows;
 import client.controllers.ButtonSelectWindowController;
 import client.controllers.SessionControl;
 import client.remote.SeatReservationClient;
+import client.ui.buttons.ButtonStates;
 import java.awt.GridLayout;
 import client.ui.buttons.SeatButton;
 import java.awt.Component;
@@ -102,7 +103,13 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
             System.out.println(seat);
         };
         
-        //TODO: Open reserve details window
+        System.out.println("Reserving seats");
+        try {
+            int[] selectedSeats = SessionControl.getInstance().getSelectedSeats();           
+            SeatReservationClient.getInstance().reserveSeats(selectedSeats);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_reserveButtonActionPerformed
 
     /**
@@ -167,7 +174,9 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     }
     
     public void updateSeat(Integer seatNumber, String newState) {
-        SessionControl.getInstance().setFreeSeat(seatNumber);
+        if(newState.equalsIgnoreCase(ButtonStates.FREE)){
+            SessionControl.getInstance().setFreeSeat(seatNumber);
+        }
         System.out.println("Update seat " + seatNumber + " with value " + newState);                
         Component component = buttonPanel.getComponent(seatNumber-1);
         if(component instanceof SeatButton){                      

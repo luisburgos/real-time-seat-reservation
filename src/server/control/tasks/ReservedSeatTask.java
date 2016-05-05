@@ -12,7 +12,7 @@ package server.control.tasks;
 public class ReservedSeatTask extends SeatTask {
 
     private final static String TAG = "RESERVED SEAT";
-    private final static long SLEEP_TIME = 100000;
+    private final static long SLEEP_TIME = 60000;
 
     public ReservedSeatTask(int eventID, int seatNumber) {
         super(TAG, SLEEP_TIME, eventID, seatNumber);
