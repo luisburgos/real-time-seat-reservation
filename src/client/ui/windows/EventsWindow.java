@@ -52,7 +52,7 @@ public class EventsWindow extends javax.swing.JFrame implements ListSelectionLis
             int rowSelect = eventListView.getSelectedIndex();
         
             if(rowSelect != -1){
-                openSeatWindow();
+                openSeatWindow(mEventList.get(rowSelect));
             }
         }
                
@@ -131,12 +131,13 @@ public class EventsWindow extends javax.swing.JFrame implements ListSelectionLis
         });
     }
     
-    public void openSeatWindow(){
-        new ButtonSelectWindow().setVisible(true);
+    public void openSeatWindow(Event selectedEvent){
+        new ButtonSelectWindow(selectedEvent).setVisible(true);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> eventListView;
     private javax.swing.JScrollPane eventListViewScrollPane;
     // End of variables declaration//GEN-END:variables
+
 }
