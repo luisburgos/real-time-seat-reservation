@@ -110,20 +110,19 @@ public class EventsRepository extends Repository<Event>{
         try {
             String query = "SELECT * FROM evento ORDER BY event_id";
             Connection con = DBManager.getInstance().getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            
-            while (rs.next()){
-                Event event = new Event();
-                event.setId(rs.getInt("event_id"));
-                event.setName(rs.getString("name"));
-                event.setSite(rs.getString("site"));
-                event.setDate(rs.getDate("date"));
-                event.setDescription(rs.getString("description"));
-                eventList.add(event);
+            try (Statement stmt = con.createStatement()) {
+                ResultSet rs = stmt.executeQuery(query);
+                
+                while (rs.next()){
+                    Event event = new Event();
+                    event.setId(rs.getInt("event_id"));
+                    event.setName(rs.getString("name"));
+                    event.setSite(rs.getString("site"));
+                    event.setDate(rs.getDate("date"));
+                    event.setDescription(rs.getString("description"));
+                    eventList.add(event);
+                }
             }
-            
-            stmt.close();
         } catch (SQLException se) {
             System.out.println(se);
         }

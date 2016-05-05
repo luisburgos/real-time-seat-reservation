@@ -12,7 +12,7 @@ public interface ServerRemote extends Remote {
     public void joinEventRoom() throws RemoteException;
     
     public void freeSeat(int seatNumber) throws RemoteException;
-    public void selectSeat(int seatNumber) throws RemoteException;
+    public void selectSeat(int seatNumber, int event_id) throws RemoteException;
     public void reserveSeats(int[] seatNumbers) throws RemoteException;
     public void cancelSeatsReservation() throws RemoteException;
     public void buySeats(int[] seatNumbers) throws RemoteException;
