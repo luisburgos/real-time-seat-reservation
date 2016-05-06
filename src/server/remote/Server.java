@@ -59,8 +59,8 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     @Override
     public void selectSeat(int seatNumber, int eventID) throws RemoteException {   
        
-        eventsHandler.get(eventID).selectSeat(seatNumber);
-        /*     
+        //eventsHandler.get(eventID).selectSeat(seatNumber);
+           
         System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
         notifyClients(seatNumber, ButtonStates.SELECTED);
         Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
@@ -79,7 +79,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
-                */
+               
     }
     
     private void notifyClients(int seatIndex, String newState){
@@ -138,10 +138,10 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         System.out.println("Fetching all events");
         
         //For DEBUG 
-        return new ArrayList<>(EventsRepositoryEndPoint.loadPersistentEvents().values());
+        //return new ArrayList<>(EventsRepositoryEndPoint.loadPersistentEvents().values());
         
         //UNCOMMENT for PRODUCTION
-        //return (ArrayList<Event>) new EventsRepository().findAll();
+        return (ArrayList<Event>) new EventsRepository().findAll();
     }
 
     @Override
