@@ -58,7 +58,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
 
     @Override
     public void selectSeat(int seatNumber, int eventID) throws RemoteException {   
-        eventID = 1;
+       
         eventsHandler.get(eventID).selectSeat(seatNumber);
         /*     
         System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
