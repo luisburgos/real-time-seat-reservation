@@ -150,7 +150,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     }
 
     @Override
-    public void joinEventRoom() throws RemoteException {
+    public void joinEventRoom(ClientRemote client, int eventID) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

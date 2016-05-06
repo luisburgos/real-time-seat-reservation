@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public interface ServerRemote extends Remote {
     public void registerClient(ClientRemote client) throws RemoteException;
 
-    public void joinEventRoom() throws RemoteException;
+    public void joinEventRoom(ClientRemote client, int eventID) throws RemoteException;
     
     public void freeSeat(int seatNumber) throws RemoteException;
     public void selectSeat(int seatNumber, int event_id) throws RemoteException;
