@@ -17,7 +17,8 @@ import java.util.logging.Logger;
 public class ButtonSelectWindowController implements SeatStateChangeListener {
 
     private ButtonSelectWindow selectSeatsWindow;
-
+    private int seatCount;
+    
     public ButtonSelectWindowController(ButtonSelectWindow selectSeatsWindow) {
         this.selectSeatsWindow = selectSeatsWindow;
         try {
@@ -25,8 +26,26 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        seatCount = 0;
+        
     }
-
+    
+    public void onSeatSelected(){
+        System.out.println("SeatCount: "+ seatCount);
+        seatCount++;
+    }
+    
+    public boolean canSelectMoreSeats(){
+        return seatCount < 5;
+    }
+    
+    public void onSeatUnselected(){
+        if(seatCount > 0){
+            seatCount--;
+        }
+    }
+    
     @Override
     public void onUpdate(HashMap<Integer, String> newStates) {        
 
