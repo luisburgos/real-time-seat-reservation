@@ -6,6 +6,7 @@ import client.remote.ClientRemote;
 import client.ui.buttons.ButtonStates;
 import server.domain.Event;
 import java.rmi.RemoteException;
+import java.rmi.server.RemoteRef;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -44,9 +45,11 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     @Override
     public void registerClient(ClientRemote client) throws RemoteException {
         try {    
-            clients.add(client);
-            clientsMap.put(getClientHost(), client);
-            System.out.println("Register new client from " + getClientHost());
+            int clientHashCode = client.hashCode();
+            String newClientKey = getClientHost() + "/" + clientHashCode;
+            clients.add(client);           
+            clientsMap.put(newClientKey, client);                                       
+            System.out.println("Register new client with key: " + newClientKey);
             System.out.println(client);
         } catch (ServerNotActiveException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);

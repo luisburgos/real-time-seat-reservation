@@ -8,6 +8,7 @@ package server.data;
 import server.domain.Event;
 import java.sql.*;
 import java.util.*;
+import server.data.dao.EventDAO;
 
 public class EventsRepository extends Repository<Event>{   
 
@@ -105,9 +106,11 @@ public class EventsRepository extends Repository<Event>{
 
     @Override
     public java.util.List findAll() {
-        ArrayList eventList = new ArrayList();
         
-        try {
+        EventDAO dao = new EventDAO();
+        ArrayList eventList = dao.getList();
+        
+        /*try {
             String query = "SELECT * FROM evento ORDER BY event_id";
             Connection con = DBManager.getInstance().getConnection();
             try (Statement stmt = con.createStatement()) {
@@ -125,7 +128,7 @@ public class EventsRepository extends Repository<Event>{
             }
         } catch (SQLException se) {
             System.out.println(se);
-        }
+        }*/
         return eventList;
     }
 }
