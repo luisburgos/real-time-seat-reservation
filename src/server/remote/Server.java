@@ -30,20 +30,22 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     private ClientNotifier mClientNotifier;
     private SeatsThreadPool mPool;
     
+    public HashMap<String, ClientRemote> clientsMap;
     public HashMap<Integer, EventHandler> eventsHandler;
 
     public Server() throws RemoteException {
         super();
+        this.clientsMap = new HashMap<>();
         this.clients = new Vector<>();
-        mPool = new SeatsThreadPool(50, 50);
-        //UnicastRemoteObject.exportObject(this, 0);
+        mPool = new SeatsThreadPool(50, 50);       
         this.eventsHandler = new HashMap();
     }
 
     @Override
     public void registerClient(ClientRemote client) throws RemoteException {
-        try {
+        try {    
             clients.add(client);
+            clientsMap.put(getClientHost(), client);
             System.out.println("Register new client from " + getClientHost());
             System.out.println(client);
         } catch (ServerNotActiveException ex) {
@@ -94,6 +96,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
     }
 
     @Override
