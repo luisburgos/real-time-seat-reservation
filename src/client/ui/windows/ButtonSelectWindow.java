@@ -108,7 +108,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
         System.out.println("Reserving seats");
         try {
             int[] selectedSeats = SessionControl.getInstance().getSelectedSeats();           
-            SeatReservationClient.getInstance().reserveSeats(selectedSeats);
+            SeatReservationClient.getInstance().reserveSeats(selectedSeats, mCurrentEvent.getId());
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }

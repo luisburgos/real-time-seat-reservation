@@ -27,7 +27,9 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     
     private static final long serialVersionUID = 11L;
     public static Vector<ClientRemote> clients;
-    
+    public HashMap<Integer, EventHandler> events;
+    //private ClientNotifier mClientNotifier;
+    //private SeatsThreadPool mPool;
     private ClientNotifier mClientNotifier;
     private SeatsThreadPool mPool;
     
@@ -38,6 +40,9 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         super();
         this.clientsMap = new HashMap<>();
         this.clients = new Vector<>();
+        //mPool = new SeatsThreadPool(50, 50);
+        //UnicastRemoteObject.exportObject(this, 0);
+        this.events = new HashMap();
         mPool = new SeatsThreadPool(50, 50);       
         this.eventsHandler = new HashMap();
     }
@@ -57,16 +62,24 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     }
 
     @Override
-    public void freeSeat(int seatNumber) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void freeSeat(int seatNumber, int event_id) throws RemoteException {
+        if(events.containsKey(event_id)){
+            events.get(event_id).freeSeat(seatNumber);
+        } else {
+            System.out.println("El evento no esta disponible");
+        }
     }
 
     @Override
-    public void selectSeat(int seatNumber, int eventID) throws RemoteException {   
+    public void selectSeat(int seatNumber, int event_id) throws RemoteException {   
        
-        //eventsHandler.get(eventID).selectSeat(seatNumber);
+        if(events.containsKey(event_id)){
+            events.get(event_id).selectSeat(seatNumber);
+        } else {
+            System.out.println("El evento no esta disponible");
+        }
            
-        System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
+        /*System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
         notifyClients(seatNumber, ButtonStates.SELECTED);
         Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
         try {
@@ -83,7 +96,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
             }));
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } */
                
     }
     
@@ -103,12 +116,16 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     }
 
     @Override
-    public void reserveSeats(int[] seatNumbers) throws RemoteException {
-        int eventID = 1;              
+    public void reserveSeats(int[] seatNumbers, int event_id) throws RemoteException {
+        if(events.containsKey(event_id)){
+            events.get(event_id).reserveSeats(seatNumbers);
+        } else {
+            System.out.println("El evento no esta disponible");
+        }             
         //System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
         //notifyClients(seatNumber, ButtonStates.SELECTED);
         //Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
-        try {           
+        /*try {           
             for(int seatNumber : seatNumbers){
                 notifyClients(seatNumber, ButtonStates.RESERVED);
                 Seat seat = new Seat(eventID, ButtonStates.RESERVED, seatNumber);
@@ -126,7 +143,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
             }
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } */
     }
 
     @Override
@@ -135,8 +152,12 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     }
 
     @Override
-    public void buySeats(int[] seatNumbers) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void buySeats(int[] seatNumbers, int event_id) throws RemoteException {
+        if(events.containsKey(event_id)){
+            events.get(event_id).buySeats(seatNumbers);
+        } else {
+            System.out.println("El evento no esta disponible");
+        }
     }
 
     @Override
@@ -152,12 +173,16 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
 
     @Override
     public Event getEvent(int eventID) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (Event) new EventsRepository().findByName(eventID);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void joinEventRoom(ClientRemote client, int eventID) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void joinEventRoom(ClientRemote client, int eventID) throws RemoteException {      
+        if(!events.containsKey(eventID)){
+            events.put(eventID, new EventHandler(eventID));
+        }
+        events.get(eventID).registerClient(client);
     }
 
 }
