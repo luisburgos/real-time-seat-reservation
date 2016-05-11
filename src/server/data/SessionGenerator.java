@@ -18,8 +18,9 @@ public class SessionGenerator {
 
     static {
         try {
-            sessionFactory = new Configuration().configure().buildSessionFactory();
+            sessionFactory = new Configuration().configure().buildSessionFactory();                                     
         } catch (HibernateException hibernateExcepcion) {
+            hibernateExcepcion.printStackTrace();
             System.err.println("Error on SessionFactory initialization. " + hibernateExcepcion);
             throw new ExceptionInInitializerError(hibernateExcepcion);
         }

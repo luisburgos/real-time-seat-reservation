@@ -46,6 +46,8 @@ public abstract class SeatTask implements Runnable {
         startWaiting();
         System.out.println("Thread " + TAG + " exiting.");
     }
+    
+    public void cancel() { mThread.interrupt(); }
 
     private void startWaiting() {
         try {
@@ -54,11 +56,12 @@ public abstract class SeatTask implements Runnable {
             mListener.onSuccessfullyFinish(eventID, seatIndex);
         } catch (InterruptedException e) {
             System.out.println("Thread " + TAG + " interrupted.");
+            mListener.onSuccessfullyFinish(eventID, seatIndex);
         }
     }
 
     public interface OnWaitingTimeFinished {
-        void onSuccessfullyFinish(int eventID, int seatIndex);
+        void onSuccessfullyFinish(int eventID, int seatIndex);        
     }
 
 }

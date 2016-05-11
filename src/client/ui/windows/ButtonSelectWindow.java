@@ -35,6 +35,11 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
         initSeatGrid();
         mCurrentEvent = selectedEvent;
         controller = new ButtonSelectWindowController(this);
+        try {
+            SeatReservationClient.getInstance().joinEventRoom(mCurrentEvent.getId());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ButtonSelectWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

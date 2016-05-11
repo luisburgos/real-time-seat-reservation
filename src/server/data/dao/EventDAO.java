@@ -7,6 +7,7 @@ package server.data.dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import org.hibernate.HibernateException;
 import server.domain.Event;
 
 /**
@@ -46,18 +47,21 @@ public class EventDAO extends DAO<Event>{
 
     @Override
     public ArrayList<Event> getList() {       
-        ArrayList eventList = null;
+        ArrayList eventList = new ArrayList();
 
         try {
-            openSession();
-            
+            openSession();            
             //eventList = (ArrayList) session.createCriteria(Event.class).list();
             eventList = (ArrayList<Event>) session
                     .createSQLQuery("SELECT * FROM evento")
                     .addEntity(Event.class)
                     .list();
+        } catch(HibernateException e){
+            e.printStackTrace();
         } finally {
-            session.close();
+            if(session != null){
+                session.close();
+            }
         }
 
         return eventList;

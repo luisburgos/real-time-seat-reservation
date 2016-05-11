@@ -22,7 +22,7 @@ public abstract class DAO<Entity> {
 
     protected void openSession() throws HibernateException {
         session = SessionGenerator.getSessionFactory().openSession();
-        transaction = session.beginTransaction();
+        transaction = session.beginTransaction();              
     }
 
     protected void exceptionManagement(HibernateException hibernateException) 

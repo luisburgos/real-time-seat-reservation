@@ -36,7 +36,7 @@ public class EventHandler {
     private static final long serialVersionUID = 11L;
     private int event_id;
     public static Vector<ClientRemote> clients;
-    private final int seatsNumber = 30;
+    private final int seatsNumber = 50;
     private HashMap<Integer, String> seats;
     private SeatsThreadPool mPool;
     

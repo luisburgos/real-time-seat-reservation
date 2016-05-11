@@ -59,6 +59,14 @@ public class SeatReservationClient extends UnicastRemoteObject implements Client
         }
     }
     
+    public void joinEventRoom(int eventID) {
+        try {
+            SeatReservationApplication.getRemoteRef().joinEventRoom(getInstance(), eventID);
+        } catch (RemoteException ex) {
+            Logger.getLogger(SeatReservationClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public interface SeatStateChangeListener {
         void onUpdate(HashMap<Integer, String> newStates);
     }

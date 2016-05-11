@@ -109,8 +109,9 @@ public class EventsRepository extends Repository<Event>{
         
         EventDAO dao = new EventDAO();
         ArrayList eventList = dao.getList();
+        /*ArrayList eventList = new ArrayList();
         
-        /*try {
+        try {
             String query = "SELECT * FROM evento ORDER BY event_id";
             Connection con = DBManager.getInstance().getConnection();
             try (Statement stmt = con.createStatement()) {
