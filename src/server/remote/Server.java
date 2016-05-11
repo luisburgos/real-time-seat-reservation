@@ -6,6 +6,7 @@ import client.remote.ClientRemote;
 import client.ui.buttons.ButtonStates;
 import server.domain.Event;
 import java.rmi.RemoteException;
+import java.rmi.server.RemoteRef;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -30,21 +31,25 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     private ClientNotifier mClientNotifier;
     private SeatsThreadPool mPool;
     
+    public HashMap<String, ClientRemote> clientsMap;
     public HashMap<Integer, EventHandler> eventsHandler;
 
     public Server() throws RemoteException {
         super();
+        this.clientsMap = new HashMap<>();
         this.clients = new Vector<>();
-        mPool = new SeatsThreadPool(50, 50);
-        //UnicastRemoteObject.exportObject(this, 0);
+        mPool = new SeatsThreadPool(50, 50);       
         this.eventsHandler = new HashMap();
     }
 
     @Override
     public void registerClient(ClientRemote client) throws RemoteException {
-        try {
-            clients.add(client);
-            System.out.println("Register new client from " + getClientHost());
+        try {    
+            int clientHashCode = client.hashCode();
+            String newClientKey = getClientHost() + "/" + clientHashCode;
+            clients.add(client);           
+            clientsMap.put(newClientKey, client);                                       
+            System.out.println("Register new client with key: " + newClientKey);
             System.out.println(client);
         } catch (ServerNotActiveException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -94,6 +99,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
     }
 
     @Override
