@@ -15,6 +15,7 @@ import java.awt.Component;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import server.domain.Event;
 
 /**
@@ -107,7 +108,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
         System.out.println("Reserving seats");
         try {
             int[] selectedSeats = SessionControl.getInstance().getSelectedSeats();           
-            SeatReservationClient.getInstance().reserveSeats(selectedSeats);
+            SeatReservationClient.getInstance().reserveSeats(selectedSeats, mCurrentEvent.getId());
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -132,8 +133,14 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     public void onSelect(int seatNumber) {
         System.out.println("On Select seat " + (seatNumber));
         try {
-            SessionControl.getInstance().selectSeat(seatNumber);
-            SeatReservationClient.getInstance().selectSeat(seatNumber, mCurrentEvent.getId());
+            if(controller.canSelectMoreSeats()){
+                controller.onSeatSelected();
+                SessionControl.getInstance().selectSeat(seatNumber);
+                SeatReservationClient.getInstance().selectSeat(seatNumber, mCurrentEvent.getId());
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "No se pueden seleccionar mas de 5 asientos");
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -146,7 +153,13 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
         System.out.println("Update seat " + seatNumber + " with value " + newState);                
         Component component = buttonPanel.getComponent(seatNumber-1);
         if(component instanceof SeatButton){                      
-            SeatButton button = (SeatButton) component;       
+            SeatButton button = (SeatButton) component;    
+            
+            //Si estaba seleccionado y se va a deseleccionar
+            if(seatIsSetFree(button.getCurrentState(), newState)){
+                controller.onSeatUnselected();
+            }
+            
             System.out.println("Before change state was " + button.getCurrentState());
             button.changeState(newState);
             System.out.println("After change state was " + button.getCurrentState());          
@@ -155,4 +168,13 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
             System.out.println("Update UI");
         }               
     }
+    
+    private boolean seatIsSetFree(String currentState, String newState){
+        return newState.equalsIgnoreCase(ButtonStates.FREE) && (
+                    currentState.equalsIgnoreCase(ButtonStates.SELECTED) ||
+                    currentState.equalsIgnoreCase(ButtonStates.RESERVED) ||
+                    currentState.equalsIgnoreCase(ButtonStates.SOLD)
+                );
+    }
+    
 }

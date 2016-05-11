@@ -50,10 +50,10 @@ public class SeatReservationClient extends UnicastRemoteObject implements Client
         }
     }
     
-    public void reserveSeats(int[] seatNumbers){
+    public void reserveSeats(int[] seatNumbers, int eventID){
         try {
            
-            SeatReservationApplication.getRemoteRef().reserveSeats(seatNumbers);
+            SeatReservationApplication.getRemoteRef().reserveSeats(seatNumbers, eventID);
         } catch (RemoteException ex) {
             Logger.getLogger(SeatReservationClient.class.getName()).log(Level.SEVERE, null, ex);
         }
