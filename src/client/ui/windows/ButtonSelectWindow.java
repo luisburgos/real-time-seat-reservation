@@ -67,7 +67,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
             }
         });
 
-        reserveButton.setText("Reserve");
+        reserveButton.setText("Buy");
         reserveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reserveButtonActionPerformed(evt);
@@ -108,15 +108,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void reserveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveButtonActionPerformed
-        DetailWindow window = new DetailWindow(SessionControl.getInstance().getSelectedSeats());
-        
-        System.out.println("Reserving seats");
-        try {
-            int[] selectedSeats = SessionControl.getInstance().getSelectedSeats();           
-            SeatReservationClient.getInstance().reserveSeats(selectedSeats, mCurrentEvent.getId());
-        } catch (RemoteException ex) {
-            Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       DetailWindow window = new DetailWindow(SessionControl.getInstance().getSelectedSeats(),mCurrentEvent.getId());
     }//GEN-LAST:event_reserveButtonActionPerformed
     
     private void initSeatGrid(){
@@ -138,14 +130,9 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     public void onSelect(int seatNumber) {
         System.out.println("On Select seat " + (seatNumber));
         try {
-            if(controller.canSelectMoreSeats()){
-                controller.onSeatSelected();
                 SessionControl.getInstance().selectSeat(seatNumber);
+                controller.onSeatSelected(seatNumber,mCurrentEvent.getId());
                 SeatReservationClient.getInstance().selectSeat(seatNumber, mCurrentEvent.getId());
-            }
-            else{
-                JOptionPane.showMessageDialog(this, "No se pueden seleccionar mas de 5 asientos");
-            }
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -161,7 +148,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
             SeatButton button = (SeatButton) component;    
             
             //Si estaba seleccionado y se va a deseleccionar
-            if(seatIsSetFree(button.getCurrentState(), newState)){
+            if(newState.equalsIgnoreCase(ButtonStates.FREE)){
                 controller.onSeatUnselected();
             }
             
@@ -172,6 +159,11 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
             this.repaint();            
             System.out.println("Update UI");
         }               
+    }
+    
+    public void onPurchaseSuccess(){
+        JOptionPane.showMessageDialog(this, "La compra ha sido exitosa");
+        this.setVisible(false);
     }
     
     private boolean seatIsSetFree(String currentState, String newState){

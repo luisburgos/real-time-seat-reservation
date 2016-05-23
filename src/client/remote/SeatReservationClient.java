@@ -13,6 +13,7 @@ public class SeatReservationClient extends UnicastRemoteObject implements Client
     
     private static final long serialVersionUID = 11L;
     private SeatStateChangeListener mListener;
+    private SeatPurchaseListener purchaseListener;
     private static SeatReservationClient instance;
     
     private SeatReservationClient() throws RemoteException {    
@@ -30,23 +31,37 @@ public class SeatReservationClient extends UnicastRemoteObject implements Client
         mListener = listener;
     }
     
-    @Override
-    public void doSomething() throws RemoteException {
-        System.out.println("Server invoked doSomething()");
+    public void setSeatPurchaseListener(SeatPurchaseListener listener){
+        purchaseListener = listener;
     }
-
+     
     @Override
     public void updateSeatsState(HashMap<Integer, String> newStates) throws RemoteException {
         if(mListener != null){
             mListener.onUpdate(newStates);
         }
     }
-
+    
+    @Override
+    public void notifyPurchaseSuccesful() throws RemoteException{
+        if(purchaseListener != null){
+            purchaseListener.onPurchaseSuccess();
+        }
+    }
+    
     public void selectSeat(int seatNumber, int eventID) {
         try {
             SeatReservationApplication.getRemoteRef().selectSeat(seatNumber, eventID);
         } catch (RemoteException ex) {
             Logger.getLogger(SeatReservationClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void freeSeat(int seatNumber, int eventID){
+        try{
+           SeatReservationApplication.getRemoteRef().freeSeat(seatNumber, eventID);
+        }catch(RemoteException ex){
+           Logger.getLogger(SeatReservationClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -67,8 +82,21 @@ public class SeatReservationClient extends UnicastRemoteObject implements Client
         }
     }
     
+    public void requesrPurchase(int[] seatsToPurchase, int event_id){
+        try {
+            SeatReservationApplication.getRemoteRef().buySeats(seatsToPurchase, event_id);
+        } catch (RemoteException ex) {
+            Logger.getLogger(SeatReservationClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public interface SeatStateChangeListener {
         void onUpdate(HashMap<Integer, String> newStates);
+    }
+    
+    public interface SeatPurchaseListener{
+        void onPurchaseSuccess();
+        void onPurchaseFailure();
     }
     
 }

@@ -6,7 +6,7 @@
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://localhost/remoteseat</property>
     <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password">12345</property>
+    <property name="hibernate.connection.password"> your_password</property>
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</property>
     <property name="connection.pool_size">1</property>
