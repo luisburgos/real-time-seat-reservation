@@ -1,12 +1,10 @@
 package server.remote;
 
-import server.control.tasks.SelectedSeatTask;
 import server.control.SeatsThreadPool;
 import client.remote.ClientRemote;
-import client.ui.buttons.ButtonStates;
+import client.remote.SeatReservationClient;
 import server.domain.Event;
 import java.rmi.RemoteException;
-import java.rmi.server.RemoteRef;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -14,13 +12,8 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.control.tasks.ReservedSeatTask;
 import server.utils.ClientNotifier;
 import server.data.EventsRepository;
-import server.data.EventsRepositoryEndPoint;
-import server.control.tasks.SeatTask;
-import server.data.SeatsRepository;
-import server.domain.Seat;
 import server.rooms.EventHandler;
 
 public class Server extends UnicastRemoteObject implements ServerRemote {
@@ -49,9 +42,8 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
 
     @Override
     public void registerClient(ClientRemote client) throws RemoteException {
-        try {    
-            int clientHashCode = client.hashCode();
-            String newClientKey = getClientHost() + "/" + clientHashCode;
+        try {                
+            String newClientKey = getClientHost();
             clients.add(client);           
             clientsMap.put(newClientKey, client);                                       
             System.out.println("Register new client with key: " + newClientKey);
@@ -61,6 +53,19 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         }
     }
 
+    @Override
+    public void unregisterClient(ClientRemote client) throws RemoteException {
+        try {                
+            System.out.println("Unregister client");
+            String newClientKey = getClientHost();
+            clients.remove(client);           
+            clientsMap.remove(newClientKey, client);                                       
+            System.out.println("Unregister client with key: " + newClientKey);            
+        } catch (ServerNotActiveException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     @Override
     public void freeSeat(int seatNumber, int event_id) throws RemoteException {
         if(events.containsKey(event_id)){
@@ -161,14 +166,14 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     }
 
     @Override
-    public ArrayList<Event> getAllEvents() throws RemoteException {
+    public ArrayList<Event> getAllEvents() throws RemoteException {       
         System.out.println("Fetching all events");
         
         //For DEBUG 
         //return new ArrayList<>(EventsRepositoryEndPoint.loadPersistentEvents().values());
         
         //UNCOMMENT for PRODUCTION
-        return (ArrayList<Event>) new EventsRepository().findAll();
+        return (ArrayList<Event>) new EventsRepository().findAll();        
     }
 
     @Override
@@ -179,10 +184,29 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
 
     @Override
     public void joinEventRoom(ClientRemote client, int eventID) throws RemoteException {      
-        if(!events.containsKey(eventID)){
-            events.put(eventID, new EventHandler(eventID));
+        try {
+            System.out.println("Joining Room: " + getClientHost()+ " in event " + eventID);
+            if(!events.containsKey(eventID)){
+                events.put(eventID, new EventHandler(eventID));
+            }
+            events.get(eventID).registerClient(client);
+        } catch (ServerNotActiveException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
-        events.get(eventID).registerClient(client);
+    }
+
+    @Override
+    public void cancelSeatsSelection() throws RemoteException {        
+        try {
+            String clientIP = getClientHost();            
+        } catch (ServerNotActiveException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }    
+
+    @Override
+    public void leaveEventRoom(ClientRemote client, int event_id) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -18,5 +18,9 @@ public class AppConstants {
     
     public static final String BOUND_ERROR_TITLE = "Error al obtener datos";
     public static final String BOUND_ERROR_MESSAGE = "Ha ocurrido un error al intenar obtener los datos de los eventos. Contacte a soporte.";
-       
+    public static final String FETCH_EVENTS_ERROR_TITLE = "Error al obtener los eventos";
+    public static final String EMPTY_EVENTS = "No hay eventos";
+    public static final String FETCH_EVENTS_ERROR_MESSAGE = "Error al obtener una lista de eventos"; 
+
+    
 }

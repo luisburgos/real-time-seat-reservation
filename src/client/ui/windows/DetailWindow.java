@@ -31,6 +31,7 @@ public class DetailWindow extends javax.swing.JFrame {
         buildTable("Ev1",selectedButtons);
         this.selectedButtons = selectedButtons;
         this.eventId = eventId;
+        controller = new DetailWindowController(this);
     }
 
     /**

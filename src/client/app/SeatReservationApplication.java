@@ -13,6 +13,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import server.remote.ServerRemote;
 import server.domain.Event;
@@ -21,12 +23,12 @@ import server.domain.Event;
  *
  * @author luisburgos
  */
-public class SeatReservationApplication {    
+public class SeatReservationApplication {        
     
-    private SeatReservationClient mClient;
+    private static SeatReservationClient mClient;
     public static ServerRemote mServer;
     
-    private EventsWindow eventsWindow;
+    private final EventsWindow eventsWindow;
     
     public SeatReservationApplication() throws RemoteException, NotBoundException   {
         
@@ -34,11 +36,9 @@ public class SeatReservationApplication {
         Registry registry = LocateRegistry.getRegistry(AppConstants.REGISTRY_IP);
 
         mServer = (ServerRemote) registry.lookup(AppConstants.LOOKUP_SERVER_REMOTE);
-        mServer.registerClient(mClient);
+        mServer.registerClient(mClient);          
         
-        ArrayList<Event> events = mServer.getAllEvents();
-        
-        eventsWindow = new EventsWindow(events);
+        eventsWindow = new EventsWindow();
     }
     
     public static ServerRemote getRemoteRef(){
@@ -66,7 +66,7 @@ public class SeatReservationApplication {
                     AppConstants.CONNECTION_ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE
             );
-            System.exit(1);
+            finish();
     }
    
     private static void treatNotBoundError(NotBoundException e) {
@@ -76,6 +76,19 @@ public class SeatReservationApplication {
                     AppConstants.BOUND_ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE
             );
-            System.exit(1);
+            finish();
+    }
+    
+    public static void finish() {
+        if(mServer != null){
+            try {
+                mServer.unregisterClient(mClient);
+                System.exit(0);
+            } catch (RemoteException ex) {
+                System.exit(1);
+                Logger.getLogger(SeatReservationApplication.class.getName()).log(Level.SEVERE, null, ex);                
+            }
+        }
+        System.exit(0);
     }
 }

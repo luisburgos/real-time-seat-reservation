@@ -5,10 +5,13 @@
  */
 package client.ui.windows;
 
+import client.app.SeatReservationApplication;
 import client.controllers.EventsWindowCotroller;
+import client.utils.AppConstants;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -21,28 +24,13 @@ import server.domain.Event;
 public class EventsWindow extends javax.swing.JFrame implements ListSelectionListener {
 
     private EventsWindowCotroller mController;
-    private ArrayList<Event> mEventList;
-    
+    private ArrayList<Event> mEventList;  
+
     public EventsWindow() {
         initComponents();
-        mController = new EventsWindowCotroller(this);
-    }
-
-    public EventsWindow(ArrayList<Event> events) {
-        this();
-        mEventList = events;
-        
-        DefaultListModel listModel = new DefaultListModel();
-        for (Event event : mEventList){
-            listModel.addElement(event.getName());
-            System.out.println(event.getName());
-        }
-        
-        eventListView.setModel(listModel);
-        eventListView.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        eventListView.setLayoutOrientation(JList.VERTICAL);
-        eventListView.setVisibleRowCount(-1);
-        eventListView.addListSelectionListener(this);
+        initCloseAction();
+        mController = new EventsWindowCotroller(this);        
+        mController.loadEvents();    
     }
     
      //This method is required by ListSelectionListener.
@@ -50,10 +38,7 @@ public class EventsWindow extends javax.swing.JFrame implements ListSelectionLis
         
         if(!e.getValueIsAdjusting()){
             int rowSelect = eventListView.getSelectedIndex();
-        
-            if(rowSelect != -1){
-                openSeatWindow(mEventList.get(rowSelect));
-            }
+            mController.openEvent(mEventList.get(rowSelect));
         }
                
     }
@@ -129,15 +114,55 @@ public class EventsWindow extends javax.swing.JFrame implements ListSelectionLis
                 new EventsWindow().setVisible(true);
             }
         });
-    }
-    
-    public void openSeatWindow(Event selectedEvent){
-        new ButtonSelectWindow(selectedEvent).setVisible(true);
-    }
+    }    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> eventListView;
     private javax.swing.JScrollPane eventListViewScrollPane;
     // End of variables declaration//GEN-END:variables
 
+    public void showEvents(ArrayList<Event> events) {
+        mEventList = events;
+        DefaultListModel listModel = new DefaultListModel();
+        for (Event event : mEventList){
+            listModel.addElement(event.getName());
+            System.out.println(event.getName());
+        }
+        
+        eventListView.setModel(listModel);
+        eventListView.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        eventListView.setLayoutOrientation(JList.VERTICAL);
+        eventListView.setVisibleRowCount(-1);
+        eventListView.addListSelectionListener(this);
+    }
+
+    public void showSeatSelectionWindow(Event selectedEvent) {
+       new ButtonSelectWindow(selectedEvent).setVisible(true);
+    }
+
+    public void showErrorMessage(String message) {      
+            JOptionPane.showMessageDialog(null,
+                    message,
+                    AppConstants.FETCH_EVENTS_ERROR_TITLE,
+                    JOptionPane.ERROR_MESSAGE
+            );
+            SeatReservationApplication.finish();
+    }
+
+    private void initCloseAction(){
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {                
+                int closeWindow = JOptionPane.showConfirmDialog(
+                        null, 
+                        "¿Realmente quieres cerrar el programa?", 
+                        "Salir", 
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (closeWindow == JOptionPane.YES_OPTION){
+                    SeatReservationApplication.finish();
+                }
+            }
+        });
+    }
 }

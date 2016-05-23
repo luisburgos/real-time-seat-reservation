@@ -5,7 +5,14 @@
  */
 package client.controllers;
 
+import client.app.SeatReservationApplication;
 import client.ui.windows.EventsWindow;
+import client.utils.AppConstants;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import server.domain.Event;
 
 /**
  *
@@ -13,14 +20,31 @@ import client.ui.windows.EventsWindow;
  */
 public class EventsWindowCotroller {
 
-    private EventsWindow mView;
+    private final EventsWindow mView;
     
     public EventsWindowCotroller(EventsWindow view) {
         mView = view;
     }
     
-    public void openEvent(int index){
-        
+    public void openEvent(Event selectedEvent){
+        if(selectedEvent != null){
+            mView.showSeatSelectionWindow(selectedEvent);
+        }
+    }
+
+    public void loadEvents() {        
+        try {
+            ArrayList<Event> events = SeatReservationApplication.getRemoteRef().getAllEvents();            
+            if(events != null && !events.isEmpty()){
+                mView.showEvents(events);
+            } else {
+                mView.showErrorMessage(AppConstants.EMPTY_EVENTS);
+            }
+        } catch (RemoteException ex) {
+            System.err.println(ex);
+            mView.showErrorMessage(AppConstants.FETCH_EVENTS_ERROR_MESSAGE);
+            Logger.getLogger(EventsWindowCotroller.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

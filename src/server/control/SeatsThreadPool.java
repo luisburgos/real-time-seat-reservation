@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -28,4 +29,7 @@ public class SeatsThreadPool {
         pool.execute(task);
     }
 
+    public synchronized Future submit(Runnable task){
+        return pool.submit(task);
+    }
 }

@@ -108,6 +108,7 @@ public class EventHandler {
 
     public void reserveSeats(int[] seatNumbers) {
         for (int seatNumber : seatNumbers) {
+            System.out.println("Reserving seat " + seatNumber);
             seats.replace(seatNumber, ButtonStates.RESERVED);
             notifyClients(seatNumber, ButtonStates.RESERVED);
         }
