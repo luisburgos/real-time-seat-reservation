@@ -5,7 +5,9 @@
  */
 package client.ui.windows;
 
+import client.controllers.DetailWindowController;
 import client.controllers.SessionControl;
+import client.remote.SeatReservationClient;
 import client.ui.buttons.SeatButton;
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -15,13 +17,20 @@ import javax.swing.table.TableModel;
  * @author JoseJulio
  */
 public class DetailWindow extends javax.swing.JFrame {
-
+    
+    DetailWindowController controller;
+    
+    int[] selectedButtons;
+    int eventId;
+    
     /**
      * Creates new form DetailWindow
      */
-    public DetailWindow(int[] selectedButtons) {
+    public DetailWindow(int[] selectedButtons, int eventId) {
         initComponents();
         buildTable("Ev1",selectedButtons);
+        this.selectedButtons = selectedButtons;
+        this.eventId = eventId;
     }
 
     /**
@@ -63,7 +72,7 @@ public class DetailWindow extends javax.swing.JFrame {
                 {null, null}
             },
             new String [] {
-                "Evento", "Asiento"
+                "Evento", "Cantidad"
             }
         ) {
             Class[] types = new Class [] {
@@ -82,17 +91,18 @@ public class DetailWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                    .addComponent(buyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -103,7 +113,7 @@ public class DetailWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
-       SessionControl.getInstance().buySeats();
+       controller.requestPurchase(selectedButtons, eventId);
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -140,14 +150,6 @@ public class DetailWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                SeatButton[] sampleButtons = new SeatButton[5];
-                sampleButtons[0] = new SeatButton(1);
-                sampleButtons[1] = new SeatButton(2);
-                sampleButtons[2] = new SeatButton(3);
-                sampleButtons[3] = new SeatButton(4);
-                sampleButtons[4] = new SeatButton(5);
-                
-                //new DetailWindow(sampleButtons).setVisible(true);
             }
         });
     }
