@@ -11,8 +11,11 @@ import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.control.SeatsThreadPool;
@@ -54,10 +57,11 @@ public class EventHandler {
 
     public void selectSeat(int seatNumber) {              
         System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
+        notifyClients(seatNumber, ButtonStates.SELECTED);
         Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
         try {
-            seats.replace(seatNumber, ButtonStates.SELECTED);
-            mPool.execute(new SelectedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
+            seats.replace(seatNumber, ButtonStates.SELECTED);           
+            Future future = mPool.submit(new SelectedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
                 @Override
                 public void onSuccessfullyFinish(int eventID, int seatIndex) {
                     //mClientNotifier.notifyAll(eventID, seatIndex);
@@ -66,19 +70,19 @@ public class EventHandler {
                     seats.replace(seatNumber, ButtonStates.FREE);
                     notifyClients(seatIndex, ButtonStates.FREE);
                 }
-            }));
+            }));           
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    private void notifyClients(int seatIndex, String newState){
-        
+    private void notifyClients(int seatIndex, String newState){        
         HashMap newStates = new HashMap<>();
         newStates.put(seatIndex, newState);
         
         for(ClientRemote client : participantClients){
             try {
+                System.out.println("Notifying client " + client);
                 client.updateSeatsState(newStates);
             } catch (RemoteException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -87,7 +91,13 @@ public class EventHandler {
     }
 
     public void registerClient(ClientRemote client) {
-        participantClients.add(client);        
+        participantClients.add(client);   
+        //Update clients when one register.
+        for (Map.Entry<Integer, String> entry : seats.entrySet()) {
+            Integer key = entry.getKey();
+            String value = entry.getValue();
+            notifyClients(key, value);
+        }        
     }
     
     public void unregisterClient(ClientRemote client) {

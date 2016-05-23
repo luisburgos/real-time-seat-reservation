@@ -22,8 +22,6 @@ public class ClientsHandler {
     
     public void notifyAll(int eventID, int seatIndex) {
         
-        
-        
     }
 
     public void register(String newClientKey, ClientRemote client) {

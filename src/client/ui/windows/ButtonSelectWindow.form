@@ -29,9 +29,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="buttonPanel" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="exitButton" min="-2" pref="63" max="-2" attributes="0"/>
-                      <EmptySpace pref="214" max="32767" attributes="0"/>
-                      <Component id="reserveButton" min="-2" pref="103" max="-2" attributes="0"/>
+                      <Component id="exitButton" min="-2" pref="75" max="-2" attributes="0"/>
+                      <EmptySpace pref="174" max="32767" attributes="0"/>
+                      <Component id="reserveButton" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -63,7 +63,7 @@
     </Container>
     <Component class="javax.swing.JButton" name="exitButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Exit"/>
+        <Property name="text" type="java.lang.String" value="Salir"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exitButtonActionPerformed"/>
@@ -71,7 +71,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="reserveButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Buy"/>
+        <Property name="text" type="java.lang.String" value="Reservar asientos"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reserveButtonActionPerformed"/>

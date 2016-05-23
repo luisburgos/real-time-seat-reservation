@@ -30,8 +30,8 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     public void registerClient(ClientRemote client) throws RemoteException {
         try {                
             String newClientKey = getClientHost();                     
-            mClientHandler.register(newClientKey, client);                                       
             System.out.println("Register new client with key: " + newClientKey);            
+            mClientHandler.register(newClientKey, client);                                                   
         } catch (ServerNotActiveException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -41,8 +41,8 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     public void unregisterClient(ClientRemote client) throws RemoteException {
         try {                
             String clientKey = getClientHost();                     
-            mClientHandler.unregister(clientKey, client);
             System.out.println("Unregister client with key: " + clientKey);            
+            mClientHandler.unregister(clientKey, client);            
         } catch (ServerNotActiveException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
