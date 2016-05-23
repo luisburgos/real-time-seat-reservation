@@ -105,31 +105,16 @@ public class EventsRepository extends Repository<Event>{
     }
 
     @Override
-    public java.util.List findAll() {
-        
+    public java.util.List findAll() {        
         EventDAO dao = new EventDAO();
-        ArrayList eventList = dao.getList();
-        /*ArrayList eventList = new ArrayList();
-        
-        try {
-            String query = "SELECT * FROM evento ORDER BY event_id";
-            Connection con = DBManager.getInstance().getConnection();
-            try (Statement stmt = con.createStatement()) {
-                ResultSet rs = stmt.executeQuery(query);
-                
-                while (rs.next()){
-                    Event event = new Event();
-                    event.setId(rs.getInt("event_id"));
-                    event.setName(rs.getString("name"));
-                    event.setSite(rs.getString("site"));
-                    event.setDate(rs.getDate("date"));
-                    event.setDescription(rs.getString("description"));
-                    eventList.add(event);
-                }
-            }
-        } catch (SQLException se) {
-            System.out.println(se);
-        }*/
+        ArrayList eventList = dao.getList();        
         return eventList;
+    }
+
+    @Override
+    public Event findByID(int event_id) {
+        EventDAO dao = new EventDAO();
+        Event event = dao.get(event_id);        
+        return event;
     }
 }

@@ -8,8 +8,8 @@ package server.rooms;
 import client.remote.ClientRemote;
 import client.ui.buttons.ButtonStates;
 import java.rmi.RemoteException;
-import static java.rmi.server.RemoteServer.getClientHost;
 import java.rmi.server.ServerNotActiveException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -19,12 +19,8 @@ import server.control.SeatsThreadPool;
 import server.control.tasks.SeatTask;
 import server.control.tasks.SelectedSeatTask;
 import server.data.SeatsRepository;
-import server.domain.Event;
 import server.domain.Seat;
 import server.remote.Server;
-import static server.remote.Server.clients;
-import server.remote.ServerRemote;
-import server.utils.ClientNotifier;
 
 /**
  *
@@ -32,18 +28,18 @@ import server.utils.ClientNotifier;
  */
 
 public class EventHandler {
+        
+    private final ArrayList<ClientRemote> participantClients;
     
-    private static final long serialVersionUID = 11L;
-    private int event_id;
-    public static Vector<ClientRemote> clients;
+    private final int eventID;    
     private final int seatsNumber = 50;
     private HashMap<Integer, String> seats;
     private SeatsThreadPool mPool;
     
-    public EventHandler(int event_id) {
+    public EventHandler(int eventID) {
         super();
-        this.event_id = event_id;
-        this.clients = new Vector<>();
+        this.eventID = eventID;
+        this.participantClients = new ArrayList<>();
         mPool = new SeatsThreadPool(50, 50);
         initSeats();
         updateSeats();
@@ -51,18 +47,17 @@ public class EventHandler {
     
     private void initSeats(){
         seats = new HashMap<>();
-        for(int i=1; i<=seatsNumber; i++){
+        for(int i=1; i <= seatsNumber; i++){
             seats.put(i, ButtonStates.FREE);
         }
     }
 
-    public void selectSeat(int seatNumber) {
-              
-        System.out.println("Selecting seat " + seatNumber + " from event " + event_id);
-        Seat seat = new Seat(event_id, ButtonStates.SELECTED, seatNumber);
+    public void selectSeat(int seatNumber) {              
+        System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
+        Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
         try {
-            seats.replace(seatNumber, ButtonStates.RESERVED);
-            mPool.execute(new SelectedSeatTask(event_id, seatNumber, new SeatTask.OnWaitingTimeFinished() {
+            seats.replace(seatNumber, ButtonStates.SELECTED);
+            mPool.execute(new SelectedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
                 @Override
                 public void onSuccessfullyFinish(int eventID, int seatIndex) {
                     //mClientNotifier.notifyAll(eventID, seatIndex);
@@ -82,7 +77,7 @@ public class EventHandler {
         HashMap newStates = new HashMap<>();
         newStates.put(seatIndex, newState);
         
-        for(ClientRemote client : clients){
+        for(ClientRemote client : participantClients){
             try {
                 client.updateSeatsState(newStates);
             } catch (RemoteException ex) {
@@ -92,14 +87,13 @@ public class EventHandler {
     }
 
     public void registerClient(ClientRemote client) {
-        try {
-            clients.add(client);
-            System.out.println("Register new client " + getClientHost() + " to event with ID: " + event_id);
-            System.out.println(client);
-        } catch (ServerNotActiveException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        participantClients.add(client);        
     }
+    
+    public void unregisterClient(ClientRemote client) {
+        participantClients.remove(client);
+    }
+    
 
     public void freeSeat(int seatNumber) {
         seats.replace(seatNumber, ButtonStates.FREE);
@@ -122,7 +116,7 @@ public class EventHandler {
         SeatsRepository rep = new SeatsRepository();       
         for (int seatNumber : seatNumbers) {
             try {
-                rep.update(new Seat(event_id, ButtonStates.SOLD, seatNumber));
+                rep.update(new Seat(eventID, ButtonStates.SOLD, seatNumber));
                 seats.replace(seatNumber, ButtonStates.SOLD);
                 notifyClients(seatNumber, ButtonStates.SOLD);
             } catch(Exception e){
@@ -132,12 +126,12 @@ public class EventHandler {
     }
 
     private void updateSeats() {
-        List soldSeats = new SeatsRepository().findByName(event_id);
+        List soldSeats = new SeatsRepository().findByName(eventID);
         for (Object o : soldSeats) {
             Seat seat = (Seat)o;
             seats.replace(seat.getSeatNumber(), seat.getState());
             notifyClients(seat.getSeatNumber(), seat.getState());
         }
     }
-    
+   
 }

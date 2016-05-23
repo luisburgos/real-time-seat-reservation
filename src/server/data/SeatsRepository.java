@@ -107,5 +107,10 @@ public class SeatsRepository extends Repository<Seat> {
         }
         return seatList;
     }
+
+    @Override
+    public Seat findByID(int event_id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

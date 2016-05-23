@@ -1,51 +1,36 @@
 package server.remote;
 
-import server.control.SeatsThreadPool;
 import client.remote.ClientRemote;
-import client.remote.SeatReservationClient;
 import server.domain.Event;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.utils.ClientNotifier;
+import server.utils.ClientsHandler;
 import server.data.EventsRepository;
 import server.rooms.EventHandler;
 
 public class Server extends UnicastRemoteObject implements ServerRemote {
     
     private static final long serialVersionUID = 11L;
-    public static Vector<ClientRemote> clients;
-    public HashMap<Integer, EventHandler> events;
-    //private ClientNotifier mClientNotifier;
-    //private SeatsThreadPool mPool;
-    private ClientNotifier mClientNotifier;
-    private SeatsThreadPool mPool;
-    
-    public HashMap<String, ClientRemote> clientsMap;
-    public HashMap<Integer, EventHandler> eventsHandler;
+        
+    private final HashMap<Integer, EventHandler> mEventsRoomHandler;                    
+    private final ClientsHandler mClientHandler;       
 
     public Server() throws RemoteException {
         super();
-        this.clientsMap = new HashMap<>();
-        this.clients = new Vector<>();
-        //mPool = new SeatsThreadPool(50, 50);
-        //UnicastRemoteObject.exportObject(this, 0);
-        this.events = new HashMap();
-        mPool = new SeatsThreadPool(50, 50);       
-        this.eventsHandler = new HashMap();
+        mClientHandler = new ClientsHandler();        
+        mEventsRoomHandler = new HashMap();                      
     }
 
     @Override
     public void registerClient(ClientRemote client) throws RemoteException {
         try {                
-            String newClientKey = getClientHost();
-            clients.add(client);           
-            clientsMap.put(newClientKey, client);                                       
+            String newClientKey = getClientHost();                     
+            mClientHandler.register(newClientKey, client);                                       
             System.out.println("Register new client with key: " + newClientKey);            
         } catch (ServerNotActiveException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -55,52 +40,118 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     @Override
     public void unregisterClient(ClientRemote client) throws RemoteException {
         try {                
-            String newClientKey = getClientHost();
-            clients.remove(client);           
-            clientsMap.remove(newClientKey, client);                                       
-            System.out.println("Unregister client with key: " + newClientKey);            
+            String clientKey = getClientHost();                     
+            mClientHandler.unregister(clientKey, client);
+            System.out.println("Unregister client with key: " + clientKey);            
+        } catch (ServerNotActiveException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+     @Override
+    public ArrayList<Event> getAllEvents() throws RemoteException {       
+        ArrayList<Event> allEvents = null;
+        try {
+            System.out.println(getClientHost() + " is Fetching all events");
+            //For DEBUG
+            //return new ArrayList<>(EventsRepositoryEndPoint.loadPersistentEvents().values());
+            
+            //UNCOMMENT for PRODUCTION
+            allEvents = (ArrayList<Event>) new EventsRepository().findAll();
+        } catch (ServerNotActiveException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return allEvents;
+    }
+
+    @Override
+    public Event getEvent(int eventID) throws RemoteException {
+        Event event = null;
+        try {
+            System.out.println(getClientHost() + " is getting event by id: " + eventID);            
+            event = (Event) new EventsRepository().findByID(eventID);        
+        } catch (ServerNotActiveException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return event;
+    }
+    
+    @Override
+    public void joinEventRoom(ClientRemote client, int eventID) throws RemoteException {      
+        try {            
+            if(!mEventsRoomHandler.containsKey(eventID)){
+                mEventsRoomHandler.put(eventID, new EventHandler(eventID));
+            }
+            mEventsRoomHandler.get(eventID).registerClient(client);
+            System.out.println("Joining room: " + getClientHost()+ " in event " + eventID);
         } catch (ServerNotActiveException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     @Override
-    public void freeSeat(int seatNumber, int event_id) throws RemoteException {
-        if(events.containsKey(event_id)){
-            events.get(event_id).freeSeat(seatNumber);
+    public void leaveEventRoom(ClientRemote client, int eventID) throws RemoteException {
+        if(mEventsRoomHandler.containsKey(eventID)){
+            mEventsRoomHandler.get(eventID).unregisterClient(client);
+        } else {
+            System.out.println("El evento no esta disponible");
+        }
+    }
+    
+    @Override
+    public void freeSeat(int seatNumber, int eventID) throws RemoteException {
+        if(mEventsRoomHandler.containsKey(eventID)){
+            mEventsRoomHandler.get(eventID).freeSeat(seatNumber);
         } else {
             System.out.println("El evento no esta disponible");
         }
     }
 
     @Override
-    public void selectSeat(int seatNumber, int event_id) throws RemoteException {   
-       
-        if(events.containsKey(event_id)){
-            events.get(event_id).selectSeat(seatNumber);
+    public void selectSeat(int seatNumber, int eventID) throws RemoteException {          
+        if(mEventsRoomHandler.containsKey(eventID)){
+            mEventsRoomHandler.get(eventID).selectSeat(seatNumber);
+        } else {
+            System.out.println("El evento no esta disponible");
+        }                                
+    }   
+
+    @Override
+    public void reserveSeats(int[] seatNumbers, int eventID) throws RemoteException {
+        if(mEventsRoomHandler.containsKey(eventID)){
+            mEventsRoomHandler.get(eventID).reserveSeats(seatNumbers);
+        } else {
+            System.out.println("El evento no esta disponible");
+        }                     
+    }    
+
+    @Override
+    public void buySeats(int[] seatNumbers, int eventID) throws RemoteException {
+        if(mEventsRoomHandler.containsKey(eventID)){
+            mEventsRoomHandler.get(eventID).buySeats(seatNumbers);
         } else {
             System.out.println("El evento no esta disponible");
         }
-           
-        /*System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
-        notifyClients(seatNumber, ButtonStates.SELECTED);
-        Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
+    }   
+
+    @Override
+    public void cancelSeatsSelection() throws RemoteException {        
         try {
-            new SeatsRepository().update(seat);
-            mPool.execute(new SelectedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
-                @Override
-                public void onSuccessfullyFinish(int eventID, int seatIndex) {
-                    //mClientNotifier.notifyAll(eventID, seatIndex);
-                    System.out.println("Free seat " + seatNumber + " from event " + eventID);
-                    seat.setState(ButtonStates.FREE);
-                    new SeatsRepository().update(seat);                    
-                    notifyClients(seatIndex, "FREE");
-                }
-            }));
-        } catch (Exception ex) {
+            String hostIP = getClientHost();
+            System.out.println(hostIP + " is canceling selection");
+        } catch (ServerNotActiveException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        } */
-               
+        }
+    }       
+    
+    @Override
+    public void cancelSeatsReservation() throws RemoteException {
+        try {
+            String hostIP = getClientHost();
+            System.out.println(hostIP + " is canceling reservation");
+        } catch (ServerNotActiveException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void notifyClients(int seatIndex, String newState){
@@ -108,103 +159,13 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         HashMap newStates = new HashMap<>();
         newStates.put(seatIndex, newState);
         
-        for(ClientRemote client : clients){
+        /*for(ClientRemote client : clients){
             try {
                 client.updateSeatsState(newStates);
             } catch (RemoteException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        
-    }
-
-    @Override
-    public void reserveSeats(int[] seatNumbers, int event_id) throws RemoteException {
-        if(events.containsKey(event_id)){
-            events.get(event_id).reserveSeats(seatNumbers);
-        } else {
-            System.out.println("El evento no esta disponible");
-        }             
-        //System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
-        //notifyClients(seatNumber, ButtonStates.SELECTED);
-        //Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
-        /*try {           
-            for(int seatNumber : seatNumbers){
-                notifyClients(seatNumber, ButtonStates.RESERVED);
-                Seat seat = new Seat(eventID, ButtonStates.RESERVED, seatNumber);
-                new SeatsRepository().update(seat);
-                mPool.execute(new ReservedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
-                    @Override
-                    public void onSuccessfullyFinish(int eventID, int seatIndex) {
-                        //mClientNotifier.notifyAll(eventID, seatIndex);
-                        System.out.println("Free seat " + seatNumber + " from event " + eventID);
-                        seat.setState(ButtonStates.FREE);
-                        new SeatsRepository().update(seat);                    
-                        notifyClients(seatNumber, "FREE");
-                    }
-                }));
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        } */
-    }
-
-    @Override
-    public void cancelSeatsReservation() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void buySeats(int[] seatNumbers, int event_id) throws RemoteException {
-        if(events.containsKey(event_id)){
-            events.get(event_id).buySeats(seatNumbers);
-        } else {
-            System.out.println("El evento no esta disponible");
-        }
-    }
-
-    @Override
-    public ArrayList<Event> getAllEvents() throws RemoteException {       
-        System.out.println("Fetching all events");
-        
-        //For DEBUG 
-        //return new ArrayList<>(EventsRepositoryEndPoint.loadPersistentEvents().values());
-        
-        //UNCOMMENT for PRODUCTION
-        return (ArrayList<Event>) new EventsRepository().findAll();        
-    }
-
-    @Override
-    public Event getEvent(int eventID) throws RemoteException {
-        return (Event) new EventsRepository().findByName(eventID);
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void joinEventRoom(ClientRemote client, int eventID) throws RemoteException {      
-        try {
-            System.out.println("Joining Room: " + getClientHost()+ " in event " + eventID);
-            if(!events.containsKey(eventID)){
-                events.put(eventID, new EventHandler(eventID));
-            }
-            events.get(eventID).registerClient(client);
-        } catch (ServerNotActiveException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void cancelSeatsSelection() throws RemoteException {        
-        try {
-            String clientIP = getClientHost();            
-        } catch (ServerNotActiveException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }    
-
-    @Override
-    public void leaveEventRoom(ClientRemote client, int event_id) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }*/   
     }
 
 }

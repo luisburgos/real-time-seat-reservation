@@ -24,6 +24,8 @@ public abstract class Repository<Entity> {
     
     public abstract List findAll();
     
+    public abstract Entity findByID(int event_id);
+    
     public abstract List findByName(int event_id);
     
 }
