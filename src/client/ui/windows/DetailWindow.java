@@ -29,6 +29,7 @@ public class DetailWindow extends javax.swing.JFrame {
     public DetailWindow(int[] selectedButtons, int eventId) {
         initComponents();
         buildTable("Ev1",selectedButtons);
+        initCloseAction();
         this.selectedButtons = selectedButtons;
         this.eventId = eventId;
         controller = new DetailWindowController(this);
@@ -164,6 +165,23 @@ public class DetailWindow extends javax.swing.JFrame {
             model.setValueAt(seatNumbers[i], i, 1);
         }
         detailTable.setModel(model);
+    }
+    
+    private void initCloseAction(){
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {                
+                int closeWindow = JOptionPane.showConfirmDialog(
+                        null, 
+                        "¿Realmente quieres cerrar el programa?", 
+                        "Salir", 
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (closeWindow == JOptionPane.YES_OPTION){
+                    DetailWindow.this.setVisible(false);
+                }
+            }
+        });
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

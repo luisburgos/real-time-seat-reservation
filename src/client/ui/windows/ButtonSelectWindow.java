@@ -24,7 +24,7 @@ import server.domain.Event;
  */
 public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton.OnStateChangeListener {
 
-    private ButtonSelectWindowController controller;
+    private ButtonSelectWindowController mController;
     private Event mCurrentEvent;
     
     /**
@@ -34,12 +34,8 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
         initComponents();        
         initSeatGrid();
         mCurrentEvent = selectedEvent;
-        controller = new ButtonSelectWindowController(this);
-        try {
-            SeatReservationClient.getInstance().joinEventRoom(mCurrentEvent.getId());
-        } catch (RemoteException ex) {
-            Logger.getLogger(ButtonSelectWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        mController = new ButtonSelectWindowController(this);
+        mController.joinEventRoom(mCurrentEvent);
     }
 
     /**
@@ -108,7 +104,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void reserveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveButtonActionPerformed
-       new DetailWindow(SessionControl.getInstance().getSelectedSeats(),mCurrentEvent.getId()).setVisible(true);
+       mController.doReservation(mCurrentEvent);
     }//GEN-LAST:event_reserveButtonActionPerformed
     
     private void initSeatGrid(){
@@ -127,12 +123,21 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     private javax.swing.JButton reserveButton;
     // End of variables declaration//GEN-END:variables
 
+    public void openDetailReservationWindow(int[] selectedSeats, int id) {
+        new DetailWindow(selectedSeats , id).setVisible(true);
+    }
+    
+    @Override
     public void onSelect(int seatNumber) {
         System.out.println("On Select seat " + (seatNumber));
         try {
-                SessionControl.getInstance().selectSeat(seatNumber);
-                controller.onSeatSelected(seatNumber,mCurrentEvent.getId());
-                SeatReservationClient.getInstance().selectSeat(seatNumber, mCurrentEvent.getId());
+            SessionControl
+                    .getInstance()
+                    .selectSeat(seatNumber);
+            mController.onSeatSelected(seatNumber,mCurrentEvent.getId());
+            SeatReservationClient
+                    .getInstance()
+                    .selectSeat(seatNumber, mCurrentEvent.getId());
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -149,7 +154,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
             
             //Si estaba seleccionado y se va a deseleccionar
             if(newState.equalsIgnoreCase(ButtonStates.FREE)){
-                controller.onSeatUnselected();
+                mController.onSeatUnselected();
             }
             
             System.out.println("Before change state was " + button.getCurrentState());

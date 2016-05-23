@@ -5,11 +5,13 @@ import client.remote.SeatReservationClient.SeatStateChangeListener;
 import client.ui.buttons.SeatButton;
 import client.ui.buttons.SeatButton.OnStateChangeListener;
 import client.ui.windows.ButtonSelectWindow;
+import client.ui.windows.DetailWindow;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.domain.Event;
 
 /**
  *
@@ -17,12 +19,12 @@ import java.util.logging.Logger;
  */
 public class ButtonSelectWindowController implements SeatStateChangeListener {
 
-    private ButtonSelectWindow selectSeatsWindow;
+    private ButtonSelectWindow mView;
     private int selectedSeats[];
     private int seatCount;
     
     public ButtonSelectWindowController(ButtonSelectWindow selectSeatsWindow) {
-        this.selectSeatsWindow = selectSeatsWindow;
+        this.mView = selectSeatsWindow;
         try {
             SeatReservationClient.getInstance().setSeatStateChangeListener(this);
         } catch (RemoteException ex) {
@@ -64,7 +66,7 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
         for (HashMap.Entry<Integer, String> entry : newStates.entrySet()) {
             Integer key = entry.getKey();
             String value = entry.getValue();
-            selectSeatsWindow.updateSeat(key, value);
+            mView.updateSeat(key, value);
         }
     }
     
@@ -72,6 +74,19 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
         for(int i=0; i<4 ;i++){
             selectedSeats[i] = selectedSeats[i+1];
         }
+    }
+
+    public void joinEventRoom(Event event) {
+       try {
+            SeatReservationClient.getInstance().joinEventRoom(event.getId());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ButtonSelectWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void doReservation(Event event) {
+        int[] selectedSeats = SessionControl.getInstance().getSelectedSeats();
+        mView.openDetailReservationWindow(selectedSeats, event.getId());
     }
     
 }
