@@ -62,7 +62,6 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
     
     @Override
     public void onUpdate(HashMap<Integer, String> newStates) {        
-
         for (HashMap.Entry<Integer, String> entry : newStates.entrySet()) {
             Integer key = entry.getKey();
             String value = entry.getValue();
@@ -85,8 +84,17 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
     }
 
     public void doReservation(Event event) {
-        int[] selectedSeats = SessionControl.getInstance().getSelectedSeats();
-        mView.openDetailReservationWindow(selectedSeats, event.getId());
+                
+        try {           
+            int[] seats = SessionControl.getInstance().getSelectedSeats();            
+            SeatReservationClient
+                    .getInstance()
+                    .reserveSeats(seats, event.getId());
+            mView.openDetailReservationWindow(seats, event.getId());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+               
     }
     
 }

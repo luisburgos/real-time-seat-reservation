@@ -144,26 +144,28 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     }
     
     public void updateSeat(Integer seatNumber, String newState) {
-        if(newState.equalsIgnoreCase(ButtonStates.FREE)){
-            SessionControl.getInstance().setFreeSeat(seatNumber);
-        }
-        System.out.println("Update seat " + seatNumber + " with value " + newState);                
-        Component component = buttonPanel.getComponent(seatNumber-1);
-        if(component instanceof SeatButton){                      
-            SeatButton button = (SeatButton) component;    
-            
-            //Si estaba seleccionado y se va a deseleccionar
+        if(seatNumber > 0){
             if(newState.equalsIgnoreCase(ButtonStates.FREE)){
-                mController.onSeatUnselected();
+            SessionControl.getInstance().setFreeSeat(seatNumber);
             }
-            
-            System.out.println("Before change state was " + button.getCurrentState());
-            button.changeState(newState);
-            System.out.println("After change state was " + button.getCurrentState());          
-            this.revalidate();
-            this.repaint();            
-            System.out.println("Update UI");
-        }               
+            System.out.println("Update seat " + seatNumber + " with value " + newState);                
+            Component component = buttonPanel.getComponent(seatNumber-1);
+            if(component instanceof SeatButton){                      
+                SeatButton button = (SeatButton) component;    
+
+                //Si estaba seleccionado y se va a deseleccionar
+                if(newState.equalsIgnoreCase(ButtonStates.FREE)){
+                    mController.onSeatUnselected();
+                }
+
+                System.out.println("Before change state was " + button.getCurrentState());
+                button.changeState(newState);
+                System.out.println("After change state was " + button.getCurrentState());          
+                this.revalidate();
+                this.repaint();            
+                System.out.println("Update UI");
+            } 
+        }              
     }
     
     public void onPurchaseSuccess(){

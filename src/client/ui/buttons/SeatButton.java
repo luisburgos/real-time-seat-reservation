@@ -68,7 +68,7 @@ public class SeatButton extends JButton implements ActionListener{
     
     private void OnButtonSold(){
         System.out.println("Button "+ seatNumber + "  was sold");
-        super.setBackground(Color.red);      
+        super.setBackground(Color.RED);      
     }
     
     private void OnButtonReserved(){
