@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import server.remote.ServerRemote;
 import server.domain.Event;
 
@@ -20,14 +21,14 @@ import server.domain.Event;
  *
  * @author luisburgos
  */
-public class SeatReservationApplication {
+public class SeatReservationApplication {    
     
     private SeatReservationClient mClient;
     public static ServerRemote mServer;
     
     private EventsWindow eventsWindow;
     
-    public SeatReservationApplication() throws RemoteException, NotBoundException{
+    public SeatReservationApplication() throws RemoteException, NotBoundException   {
         
         mClient = SeatReservationClient.getInstance();
         Registry registry = LocateRegistry.getRegistry(AppConstants.REGISTRY_IP);
@@ -52,12 +53,29 @@ public class SeatReservationApplication {
         try {
             new SeatReservationApplication().start();       
         } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
+            treatRemoteError(e);
+        } catch (NotBoundException ex) {
+            treatNotBoundError(ex);
         }        
     }
 
+    private static void treatRemoteError(RemoteException e) {
+        System.err.println(e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    AppConstants.CONNECTION_ERROR_MESSAGE,
+                    AppConstants.CONNECTION_ERROR_TITLE,
+                    JOptionPane.ERROR_MESSAGE
+            );
+            System.exit(1);
+    }
    
-    
+    private static void treatNotBoundError(NotBoundException e) {
+        System.err.println(e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    AppConstants.BOUND_ERROR_MESSAGE,
+                    AppConstants.BOUND_ERROR_TITLE,
+                    JOptionPane.ERROR_MESSAGE
+            );
+            System.exit(1);
+    }
 }

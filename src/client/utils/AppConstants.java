@@ -13,5 +13,10 @@ public class AppConstants {
     
     public static final String REGISTRY_IP = "127.0.0.1";
     public static final String LOOKUP_SERVER_REMOTE = "Server";
+    public static final String CONNECTION_ERROR_TITLE = "Error de conexión";
+    public static final String CONNECTION_ERROR_MESSAGE = "No se ha podido iniciar una conexión. Verifique su conexión a Internet";
     
+    public static final String BOUND_ERROR_TITLE = "Error al obtener datos";
+    public static final String BOUND_ERROR_MESSAGE = "Ha ocurrido un error al intenar obtener los datos de los eventos. Contacte a soporte.";
+       
 }
