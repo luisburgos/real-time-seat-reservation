@@ -46,8 +46,7 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
             String newClientKey = getClientHost();
             clients.add(client);           
             clientsMap.put(newClientKey, client);                                       
-            System.out.println("Register new client with key: " + newClientKey);
-            System.out.println(client);
+            System.out.println("Register new client with key: " + newClientKey);            
         } catch (ServerNotActiveException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -56,7 +55,6 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     @Override
     public void unregisterClient(ClientRemote client) throws RemoteException {
         try {                
-            System.out.println("Unregister client");
             String newClientKey = getClientHost();
             clients.remove(client);           
             clientsMap.remove(newClientKey, client);                                       
