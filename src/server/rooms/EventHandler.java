@@ -106,15 +106,19 @@ public class EventHandler {
     
 
     public void freeSeat(int seatNumber) {
-        seats.replace(seatNumber, ButtonStates.FREE);
-        notifyClients(seatNumber, ButtonStates.FREE);
+        if(seatNumber > 0){
+            seats.replace(seatNumber, ButtonStates.FREE);
+            notifyClients(seatNumber, ButtonStates.FREE);
+        }        
     }
 
     public void reserveSeats(int[] seatNumbers) {
         for (int seatNumber : seatNumbers) {
-            System.out.println("Reserving seat " + seatNumber);
-            seats.replace(seatNumber, ButtonStates.RESERVED);
-            notifyClients(seatNumber, ButtonStates.RESERVED);
+            if(seatNumber > 0){
+                System.out.println("Reserving seat " + seatNumber);
+                seats.replace(seatNumber, ButtonStates.RESERVED);
+                notifyClients(seatNumber, ButtonStates.RESERVED);
+            }
         }
     }
 
@@ -125,13 +129,15 @@ public class EventHandler {
     public void buySeats(int[] seatNumbers) {
         SeatsRepository rep = new SeatsRepository();       
         for (int seatNumber : seatNumbers) {
-            try {
-                rep.update(new Seat(eventID, ButtonStates.SOLD, seatNumber));
-                seats.replace(seatNumber, ButtonStates.SOLD);
-                notifyClients(seatNumber, ButtonStates.SOLD);
-            } catch(Exception e){
-                System.out.println("No se pudo completar la compra.\n" + e.getMessage());
-            }
+            if(seatNumber > 0){
+                try {
+                    rep.update(new Seat(eventID, ButtonStates.SOLD, seatNumber));
+                    seats.replace(seatNumber, ButtonStates.SOLD);
+                    notifyClients(seatNumber, ButtonStates.SOLD);
+                } catch(Exception e){
+                    System.out.println("No se pudo completar la compra.\n" + e.getMessage());
+                }
+            }            
         }
     }
 
