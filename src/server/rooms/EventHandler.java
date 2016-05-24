@@ -10,6 +10,7 @@ import client.ui.buttons.ButtonStates;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +40,8 @@ public class EventHandler {
     private final int seatsNumber = 50;
     private HashMap<Integer, String> seats;
     private SeatsThreadPool mPool;
+    
+    private ArrayList<Integer> preSoldSeats;
     
     public EventHandler(int eventID) {
         super();
@@ -124,15 +127,19 @@ public class EventHandler {
                 @Override
                 public void onSuccessfullyFinish(int eventID, int seatIndex) {
                     //mClientNotifier.notifyAll(eventID, seatIndex);
+                    System.out.println("Finish reservation now index is " + seats.get(seatIndex));
+                    if(!preSoldSeats.contains(new Integer(seatIndex))){
+                        try {                                       
+                            client.notifyPurchaseFailure();
+                        } catch(RemoteException e){
+                            e.printStackTrace();
+                            System.out.println("No se pudo completar la compra. " + e.getMessage());
+                        }
+                    }
+                    
                     System.out.println("Free seat " + seatNumber + " from event " + eventID);
                     seat.setState(ButtonStates.FREE);
-                    seats.replace(seatNumber, ButtonStates.FREE);
-                    try {                                       
-                        client.notifyPurchaseFailure();
-                    } catch(RemoteException e){
-                        e.printStackTrace();
-                        System.out.println("No se pudo completar la compra. " + e.getMessage());
-                    }
+                    seats.replace(seatNumber, ButtonStates.FREE);                                        
                     notifyClients(seatIndex, ButtonStates.FREE);
                 }
             }));                      
@@ -142,13 +149,15 @@ public class EventHandler {
         }
     }
 
-    public void buySeats(int[] seatNumbers, ClientRemote client) {
+    public void buySeats(int[] seatNumbers, ClientRemote client) {        
+        preSoldSeats = getIntList(seatNumbers);
         cancelReservation(seatNumbers);
         SeatsRepository rep = new SeatsRepository();       
         for (int seatNumber : seatNumbers) {
             if(seatNumber > 0){
                 rep.update(new Seat(eventID, ButtonStates.SOLD, seatNumber));
                 seats.replace(seatNumber, ButtonStates.SOLD);        
+                System.out.println("Buying seat " + seatNumber);
                 try {                                       
                     client.notifyPurchaseSuccesful();                   
                 } catch(RemoteException e){
@@ -204,6 +213,17 @@ public class EventHandler {
                 current.cancel(true);
             }
         }
+    }
+
+    private ArrayList<Integer> getIntList(int[] seatNumbers) {
+        ArrayList<Integer> intList = new ArrayList<Integer>(seatNumbers.length);
+
+        for (int i=0; i < seatNumbers.length; i++)
+        {
+            intList.add(seatNumbers[i]);
+        }
+        
+        return intList;
     }
    
 }

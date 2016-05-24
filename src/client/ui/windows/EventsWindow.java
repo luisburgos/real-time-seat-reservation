@@ -136,8 +136,8 @@ public class EventsWindow extends javax.swing.JFrame implements ListSelectionLis
         eventListView.addListSelectionListener(this);
     }
 
-    public void showSeatSelectionWindow(Event selectedEvent) {
-       new ButtonSelectWindow(selectedEvent).setVisible(true);
+    public void showSeatSelectionWindow(Event selectedEvent) {               
+        new ButtonSelectWindow(selectedEvent).setVisible(true);             
     }
 
     public void showErrorMessage(String message) {      

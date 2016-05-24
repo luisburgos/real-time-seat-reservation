@@ -22,6 +22,7 @@ public class DetailWindowController implements SeatPurchaseListener {
     
     private DetailWindow detailWindow;
     private int[] reservedSeats;
+    private int sizeOfReservation = 0;
     
     public DetailWindowController(DetailWindow detailWindow) {
         this.detailWindow = detailWindow;
@@ -34,6 +35,7 @@ public class DetailWindowController implements SeatPurchaseListener {
     
     public void requestPurchase(int[] reservedSeats, int currentEvent){
         this.reservedSeats = reservedSeats;
+        sizeOfReservation = this.reservedSeats.length;
         try {
             SeatReservationClient.getInstance().requesrPurchase(reservedSeats, currentEvent);
         } catch (RemoteException ex) {
@@ -43,14 +45,22 @@ public class DetailWindowController implements SeatPurchaseListener {
     
     @Override
     public void onPurchaseSuccess() {
-        SessionControl.getInstance().clearSelectedSeats();
-        detailWindow.closeWithSuccess();        
+        if(sizeOfReservation == 1){
+            SessionControl.getInstance().clearSelectedSeats();
+            detailWindow.closeWithSuccess();        
+        } else {
+            sizeOfReservation--;
+        }                
     }
 
     @Override
     public void onPurchaseFailure() {
-        SessionControl.getInstance().clearSelectedSeats();        
-        detailWindow.closeWithFailure();
+        if(sizeOfReservation == 1){
+            SessionControl.getInstance().clearSelectedSeats();        
+            detailWindow.closeWithFailure();
+        } else {
+            sizeOfReservation--;
+        }            
     }
 
     public void cancelReservedSeats(int[] reservedSeats, int eventId) {        

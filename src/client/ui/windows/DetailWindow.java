@@ -116,8 +116,8 @@ public class DetailWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        SessionControl.getInstance().clearSelectedSeats();
-        controller.cancelReservedSeats(selectedButtons, eventId);      
+       SessionControl.getInstance().clearSelectedSeats();
+       controller.cancelReservedSeats(selectedButtons, eventId);      
        this.setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
