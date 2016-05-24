@@ -81,10 +81,13 @@ public class EventHandler {
                 @Override
                 public void onSuccessfullyFinish(int eventID, int seatIndex) {
                     //mClientNotifier.notifyAll(eventID, seatIndex);
-                    System.out.println("Free seat " + seatNumber + " from event " + eventID);
-                    seat.setState(ButtonStates.FREE);
-                    seats.replace(seatNumber, ButtonStates.FREE);
-                    notifyClients(seatIndex, ButtonStates.FREE);
+                    System.out.println("Current seat state " + seats.get(seatIndex));
+                    if(!seats.get(seatIndex).equalsIgnoreCase(ButtonStates.RESERVED)){
+                        System.out.println("Free seat " + seatNumber + " from event " + eventID);
+                        seat.setState(ButtonStates.FREE);
+                        seats.replace(seatNumber, ButtonStates.FREE);
+                        notifyClients(seatIndex, ButtonStates.FREE);
+                    }
                 }
             }));  
             runningThreads.put(seatNumber, future);
