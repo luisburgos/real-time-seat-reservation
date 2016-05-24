@@ -34,7 +34,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
         initComponents();        
         initSeatGrid();
         mCurrentEvent = selectedEvent;
-        mController = new ButtonSelectWindowController(this);
+        mController = new ButtonSelectWindowController(this, mCurrentEvent);
         mController.joinEventRoom(mCurrentEvent);
     }
 

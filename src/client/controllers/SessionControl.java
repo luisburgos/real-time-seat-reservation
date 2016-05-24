@@ -28,6 +28,8 @@ public class SessionControl {
     
     private ArrayList<Integer> seatIndexSelection;
     
+    private RemoveListener mListener;
+    
     private SessionControl(){
         reservedSeats = new SeatButton[MAX_SIZE];
         selectedSeatNumbers = new int[MAX_SIZE];
@@ -108,8 +110,10 @@ public class SessionControl {
 
     private void removeSeatFromSelection(int i) {
         System.out.println("Removing " + i + " from " + seatIndexSelection);
-        seatIndexSelection.remove(i);
-        
+        Integer removedIndex = seatIndexSelection.remove(i);
+        if(mListener != null){
+            mListener.onRemove(removedIndex);
+        }        
         /*selectedSeatNumbers[i] = 0;
         amountSelected-=1;
         changeSeatsOrder();*/
@@ -140,6 +144,14 @@ public class SessionControl {
             ret[i] = integers.get(i).intValue();
         }
         return ret;
+    }
+    
+    public void setRemoteListener(RemoveListener listener){
+        mListener = listener;
+    }
+    
+    public interface RemoveListener {
+        void onRemove(int index);
     }
     
 }

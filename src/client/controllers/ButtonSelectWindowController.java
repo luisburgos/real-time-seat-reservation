@@ -1,5 +1,6 @@
 package client.controllers;
 
+import client.controllers.SessionControl.RemoveListener;
 import client.remote.SeatReservationClient;
 import client.remote.SeatReservationClient.SeatStateChangeListener;
 import client.ui.buttons.SeatButton;
@@ -17,15 +18,19 @@ import server.domain.Event;
  *
  * @author luisburgos
  */
-public class ButtonSelectWindowController implements SeatStateChangeListener {
+public class ButtonSelectWindowController implements SeatStateChangeListener, RemoveListener {
 
     private ButtonSelectWindow mView;
     private int selectedSeats[];
     private int seatCount;   
     
-    public ButtonSelectWindowController(ButtonSelectWindow selectSeatsWindow) {
+    private final Event mEvent;
+    
+    public ButtonSelectWindowController(ButtonSelectWindow selectSeatsWindow, Event event) {
+        mEvent = event;
         this.mView = selectSeatsWindow;
         try {
+            SessionControl.getInstance().setRemoteListener(this);
             SeatReservationClient.getInstance().setSeatStateChangeListener(this);
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
@@ -113,6 +118,18 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
             SeatReservationClient.getInstance().leaveEventRoom(event.getId());
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void onRemove(int index) {
+        try {
+            System.out.println("On Remove fromo Controller removing " + index);
+            SeatReservationClient
+                    .getInstance()
+                    .cancelSelections(new int[]{index}, mEvent.getId());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
