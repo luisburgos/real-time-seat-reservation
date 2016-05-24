@@ -149,11 +149,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
         if(seatNumber > 0){                        
             if(newState.equalsIgnoreCase(ButtonStates.SOLD)){
                 SessionControl.getInstance().setFreeSeat(seatNumber);
-            }
-            
-            if(newState.equalsIgnoreCase(ButtonStates.FREE)){
-                SessionControl.getInstance().setFreeSeat(seatNumber);
-            }
+            }                       
             
             System.out.println("Update seat " + seatNumber + " with value " + newState);                
             Component component = buttonPanel.getComponent(seatNumber-1);
@@ -165,8 +161,24 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
                     return;
                 }
                 
+                if(button.getCurrentState().equalsIgnoreCase(ButtonStates.RESERVED)){
+                    if(newState.equalsIgnoreCase(ButtonStates.FREE)){
+                        System.out.println("Trying to change RESERVED to FREE");
+                        boolean isReservedFromHere = SessionControl
+                                                .getInstance()
+                                                .isSeatNumberReserved(seatNumber);
+                        if(isReservedFromHere){
+                            System.out.println("Not changing because is still reserved");
+                            return;
+                        } else {
+                            SessionControl.getInstance().setFreeSeat(seatNumber);
+                        }
+                    }
+                }
+                
                 //Si estaba seleccionado y se va a deseleccionar
                 if(newState.equalsIgnoreCase(ButtonStates.FREE)){
+                    SessionControl.getInstance().setFreeSeat(seatNumber);
                     mController.onSeatUnselected();
                 }
 

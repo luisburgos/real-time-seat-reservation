@@ -88,5 +88,17 @@ public class SessionControl {
         amountSelected-=1;
         changeSeatsOrder();
     }
+
+    public boolean isSeatNumberReserved(Integer seatNumber) {
+        boolean isReserved = false;
+        for(int seat : selectedSeatNumbers){
+            System.out.println("Comparing " + seat + " and " + seatNumber);
+            if(seat == seatNumber){
+                isReserved = true;
+                break;
+            }
+        }
+        return isReserved;
+    }
     
 }
