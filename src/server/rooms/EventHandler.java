@@ -126,14 +126,15 @@ public class EventHandler {
                     seats.replace(seatNumber, ButtonStates.FREE);
                     notifyClients(seatIndex, ButtonStates.FREE);
                 }
-            }));  
-            runningThreads.put(seatNumber, future);
+            }));              
+            runningThreads.replace(seatNumber, future);
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void buySeats(int[] seatNumbers, ClientRemote client) {
+        cancelReservation(seatNumbers);
         SeatsRepository rep = new SeatsRepository();       
         for (int seatNumber : seatNumbers) {
             if(seatNumber > 0){

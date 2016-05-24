@@ -146,12 +146,12 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     }
     
     public void updateSeat(Integer seatNumber, String newState) {
-        if(seatNumber > 0){
-            if(newState.equalsIgnoreCase(ButtonStates.FREE)){
+        if(seatNumber > 0){                        
+            if(newState.equalsIgnoreCase(ButtonStates.SOLD)){
                 SessionControl.getInstance().setFreeSeat(seatNumber);
             }
             
-            if(newState.equalsIgnoreCase(ButtonStates.SOLD)){
+            if(newState.equalsIgnoreCase(ButtonStates.FREE)){
                 SessionControl.getInstance().setFreeSeat(seatNumber);
             }
             
@@ -160,6 +160,11 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
             if(component instanceof SeatButton){                      
                 SeatButton button = (SeatButton) component;    
 
+                if(button.getCurrentState().equalsIgnoreCase(ButtonStates.SOLD)){
+                    System.out.println("Already sold, not chaging");
+                    return;
+                }
+                
                 //Si estaba seleccionado y se va a deseleccionar
                 if(newState.equalsIgnoreCase(ButtonStates.FREE)){
                     mController.onSeatUnselected();

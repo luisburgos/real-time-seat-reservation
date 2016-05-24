@@ -6,10 +6,6 @@
 package client.ui.windows;
 
 import client.controllers.DetailWindowController;
-import client.controllers.SessionControl;
-import client.remote.SeatReservationClient;
-import client.ui.buttons.SeatButton;
-import client.utils.AppConstants;
 import javax.swing.*;
 import javax.swing.table.TableModel;
 
@@ -119,7 +115,8 @@ public class DetailWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.setVisible(false);
+       controller.cancelReservedSeats(eventId);      
+       this.setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**

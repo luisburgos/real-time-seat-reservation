@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 public class DetailWindowController implements SeatPurchaseListener {
     
     private DetailWindow detailWindow;
-    private int[] purchasedSeats;
+    private int[] reservedSeats;
     
     public DetailWindowController(DetailWindow detailWindow) {
         this.detailWindow = detailWindow;
@@ -32,10 +32,10 @@ public class DetailWindowController implements SeatPurchaseListener {
         }
     }
     
-    public void requestPurchase(int[] pruchasedSeats, int currentEvent){
-        this.purchasedSeats = purchasedSeats;
+    public void requestPurchase(int[] reservedSeats, int currentEvent){
+        this.reservedSeats = reservedSeats;
         try {
-            SeatReservationClient.getInstance().requesrPurchase(pruchasedSeats, currentEvent);
+            SeatReservationClient.getInstance().requesrPurchase(reservedSeats, currentEvent);
         } catch (RemoteException ex) {
             Logger.getLogger(DetailWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -49,6 +49,16 @@ public class DetailWindowController implements SeatPurchaseListener {
     @Override
     public void onPurchaseFailure() {
         detailWindow.closeWithFailure();
+    }
+
+    public void cancelReservedSeats(int eventId) {        
+        try {
+            SeatReservationClient
+                    .getInstance()
+                    .cancelReservations(reservedSeats, eventId);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     
