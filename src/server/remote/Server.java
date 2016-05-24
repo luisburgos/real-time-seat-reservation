@@ -137,26 +137,16 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
         } else {
             System.out.println("El evento no esta disponible");
         }
-    }   
-
-    @Override
-    public void cancelSeatsSelection() throws RemoteException {        
-        try {
-            String hostIP = getClientHost();
-            System.out.println(hostIP + " is canceling selection");
-        } catch (ServerNotActiveException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }       
+    }
     
     @Override
-    public void cancelSeatsReservation() throws RemoteException {
-        try {
-            String hostIP = getClientHost();
-            System.out.println(hostIP + " is canceling reservation");
-        } catch (ServerNotActiveException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void cancelSeatsSelection(int[] seatNumbers, int eventID) throws RemoteException {
+        mEventsRoomHandler.get(eventID).cancelSelection(seatNumbers);
+    }
+
+    @Override
+    public void cancelSeatsReservation(int[] seatNumbers, int eventID) throws RemoteException {
+        mEventsRoomHandler.get(eventID).cancelReservation(seatNumbers);
     }
     
     private void notifyClients(int seatIndex, String newState){

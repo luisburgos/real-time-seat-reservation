@@ -21,7 +21,7 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
 
     private ButtonSelectWindow mView;
     private int selectedSeats[];
-    private int seatCount;
+    private int seatCount;   
     
     public ButtonSelectWindowController(ButtonSelectWindow selectSeatsWindow) {
         this.mView = selectSeatsWindow;
@@ -76,7 +76,7 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
     }
 
     public void joinEventRoom(Event event) {
-       try {
+        try {            
             SeatReservationClient.getInstance().joinEventRoom(event.getId());
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -95,6 +95,25 @@ public class ButtonSelectWindowController implements SeatStateChangeListener {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
                
+    }
+
+    public void cancelSelectedSeats(Event event) {
+        int[] selectedSeats = SessionControl.getInstance().getSelectedSeats();
+        try {
+            SeatReservationClient
+                    .getInstance()
+                    .cancelSelections(selectedSeats, event.getId());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void leaveRoom(Event event) {
+        try {            
+            SeatReservationClient.getInstance().leaveEventRoom(event.getId());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ButtonSelectWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

@@ -19,6 +19,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.control.SeatsThreadPool;
+import server.control.tasks.ReservedSeatTask;
 import server.control.tasks.SeatTask;
 import server.control.tasks.SelectedSeatTask;
 import server.data.SeatsRepository;
@@ -33,7 +34,7 @@ import server.remote.Server;
 public class EventHandler {
         
     private final ArrayList<ClientRemote> participantClients;
-    
+    private final HashMap<Integer, Future> runningThreads;
     private final int eventID;    
     private final int seatsNumber = 50;
     private HashMap<Integer, String> seats;
@@ -42,9 +43,10 @@ public class EventHandler {
     public EventHandler(int eventID) {
         super();
         this.eventID = eventID;
-        this.participantClients = new ArrayList<>();
+        this.participantClients = new ArrayList();
         mPool = new SeatsThreadPool(50, 50);
         initSeats();
+        runningThreads = new HashMap<>();
         updateSeats();
     }
     
@@ -53,42 +55,7 @@ public class EventHandler {
         for(int i=1; i <= seatsNumber; i++){
             seats.put(i, ButtonStates.FREE);
         }
-    }
-
-    public void selectSeat(int seatNumber) {              
-        System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
-        notifyClients(seatNumber, ButtonStates.SELECTED);
-        Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
-        try {
-            seats.replace(seatNumber, ButtonStates.SELECTED);           
-            Future future = mPool.submit(new SelectedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
-                @Override
-                public void onSuccessfullyFinish(int eventID, int seatIndex) {
-                    //mClientNotifier.notifyAll(eventID, seatIndex);
-                    System.out.println("Free seat " + seatNumber + " from event " + eventID);
-                    seat.setState(ButtonStates.FREE);
-                    seats.replace(seatNumber, ButtonStates.FREE);
-                    notifyClients(seatIndex, ButtonStates.FREE);
-                }
-            }));           
-        } catch (Exception ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    private void notifyClients(int seatIndex, String newState){        
-        HashMap newStates = new HashMap<>();
-        newStates.put(seatIndex, newState);
-        
-        for(ClientRemote client : participantClients){
-            try {
-                System.out.println("Notifying client " + client);
-                client.updateSeatsState(newStates);
-            } catch (RemoteException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+    }     
 
     public void registerClient(ClientRemote client) {
         participantClients.add(client);   
@@ -104,6 +71,27 @@ public class EventHandler {
         participantClients.remove(client);
     }
     
+    public void selectSeat(int seatNumber) {              
+        System.out.println("Selecting seat " + seatNumber + " from event " + eventID);
+        notifyClients(seatNumber, ButtonStates.SELECTED);
+        Seat seat = new Seat(eventID, ButtonStates.SELECTED, seatNumber);
+        try {
+            seats.replace(seatNumber, ButtonStates.SELECTED);           
+            Future future = mPool.submit(new SelectedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
+                @Override
+                public void onSuccessfullyFinish(int eventID, int seatIndex) {
+                    //mClientNotifier.notifyAll(eventID, seatIndex);
+                    System.out.println("Free seat " + seatNumber + " from event " + eventID);
+                    seat.setState(ButtonStates.FREE);
+                    seats.replace(seatNumber, ButtonStates.FREE);
+                    notifyClients(seatIndex, ButtonStates.FREE);
+                }
+            }));  
+            runningThreads.put(seatNumber, future);
+        } catch (Exception ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }    
 
     public void freeSeat(int seatNumber) {
         if(seatNumber > 0){
@@ -115,15 +103,34 @@ public class EventHandler {
     public void reserveSeats(int[] seatNumbers) {
         for (int seatNumber : seatNumbers) {
             if(seatNumber > 0){
-                System.out.println("Reserving seat " + seatNumber);
+                /*System.out.println("Reserving seat " + seatNumber);
                 seats.replace(seatNumber, ButtonStates.RESERVED);
-                notifyClients(seatNumber, ButtonStates.RESERVED);
+                notifyClients(seatNumber, ButtonStates.RESERVED);*/
+                reserveSeat(seatNumber);
             }
         }
-    }
-
-    public void cancelSeatsReservation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }    
+    
+    private void reserveSeat(int seatNumber) {
+        System.out.println("Reserving seat " + seatNumber + " from event " + eventID);
+        notifyClients(seatNumber, ButtonStates.RESERVED);
+        Seat seat = new Seat(eventID, ButtonStates.RESERVED, seatNumber);
+        try {
+            seats.replace(seatNumber, ButtonStates.RESERVED);           
+            Future future = mPool.submit(new ReservedSeatTask(eventID, seatNumber, new SeatTask.OnWaitingTimeFinished() {
+                @Override
+                public void onSuccessfullyFinish(int eventID, int seatIndex) {
+                    //mClientNotifier.notifyAll(eventID, seatIndex);
+                    System.out.println("Free seat " + seatNumber + " from event " + eventID);
+                    seat.setState(ButtonStates.FREE);
+                    seats.replace(seatNumber, ButtonStates.FREE);
+                    notifyClients(seatIndex, ButtonStates.FREE);
+                }
+            }));  
+            runningThreads.put(seatNumber, future);
+        } catch (Exception ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void buySeats(int[] seatNumbers, ClientRemote client) {
@@ -142,6 +149,20 @@ public class EventHandler {
             }            
         }
     }
+    
+    private void notifyClients(int seatIndex, String newState){        
+        HashMap newStates = new HashMap<>();
+        newStates.put(seatIndex, newState);
+        
+        for(ClientRemote client : participantClients){
+            try {
+                System.out.println("Notifying client " + client);
+                client.updateSeatsState(newStates);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 
     private void updateSeats() {
         List soldSeats = new SeatsRepository().findByName(eventID);
@@ -149,6 +170,28 @@ public class EventHandler {
             Seat seat = (Seat)o;
             seats.replace(seat.getSeatNumber(), seat.getState());
             notifyClients(seat.getSeatNumber(), seat.getState());
+        }
+    }
+
+    public void cancelSelection(int[] seatNumbers) {
+        Future current;
+        for(int seatNumber : seatNumbers){
+            if(seatNumber > 0){
+                System.out.println("Cancelling seat selection of " + seatNumber);
+                current = runningThreads.get(seatNumber);
+                current.cancel(true);
+            }            
+        }
+    }
+
+    public void cancelReservation(int[] seatNumbers) {
+        Future current;
+        for(int seatNumber : seatNumbers){
+            if(seatNumber > 0){
+                System.out.println("Cancelling seat reservation of " + seatNumber);
+                current = runningThreads.get(seatNumber);
+                current.cancel(true);
+            }
         }
     }
    

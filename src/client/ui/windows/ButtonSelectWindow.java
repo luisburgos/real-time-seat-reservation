@@ -100,6 +100,8 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
+       mController.cancelSelectedSeats(mCurrentEvent);
+       mController.leaveRoom(mCurrentEvent);
        this.setVisible(false);
     }//GEN-LAST:event_exitButtonActionPerformed
 

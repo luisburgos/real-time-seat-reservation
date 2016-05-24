@@ -23,7 +23,7 @@ public interface ServerRemote extends Remote {
     public void reserveSeats(int[] seatNumbers, int event_id) throws RemoteException;    
     public void buySeats(int[] seatNumbers, int event_id) throws RemoteException;
     
-    public void cancelSeatsSelection() throws RemoteException;
-    public void cancelSeatsReservation() throws RemoteException;       
+    public void cancelSeatsSelection(int[] seatNumbers, int eventID) throws RemoteException;
+    public void cancelSeatsReservation(int[] seatNumbers, int eventID) throws RemoteException;       
     
 }
