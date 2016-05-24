@@ -100,18 +100,18 @@ public class EventHandler {
         }        
     }
 
-    public void reserveSeats(int[] seatNumbers) {
+    public void reserveSeats(int[] seatNumbers, ClientRemote client) {
         for (int seatNumber : seatNumbers) {
             if(seatNumber > 0){
                 /*System.out.println("Reserving seat " + seatNumber);
                 seats.replace(seatNumber, ButtonStates.RESERVED);
                 notifyClients(seatNumber, ButtonStates.RESERVED);*/
-                reserveSeat(seatNumber);
+                reserveSeat(seatNumber, client);
             }
         }
     }    
     
-    private void reserveSeat(int seatNumber) {
+    private void reserveSeat(int seatNumber, ClientRemote client) {
         System.out.println("Reserving seat " + seatNumber + " from event " + eventID);
         notifyClients(seatNumber, ButtonStates.RESERVED);
         Seat seat = new Seat(eventID, ButtonStates.RESERVED, seatNumber);
@@ -124,9 +124,16 @@ public class EventHandler {
                     System.out.println("Free seat " + seatNumber + " from event " + eventID);
                     seat.setState(ButtonStates.FREE);
                     seats.replace(seatNumber, ButtonStates.FREE);
+                    try {                                       
+                        client.notifyPurchaseFailure();
+                    } catch(RemoteException e){
+                        e.printStackTrace();
+                        System.out.println("No se pudo completar la compra. " + e.getMessage());
+                    }
                     notifyClients(seatIndex, ButtonStates.FREE);
                 }
-            }));              
+            }));          
+            //cancelSelection(seatNumber);
             runningThreads.replace(seatNumber, future);
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -173,7 +180,7 @@ public class EventHandler {
             notifyClients(seat.getSeatNumber(), seat.getState());
         }
     }
-
+    
     public void cancelSelection(int[] seatNumbers) {
         Future current;
         for(int seatNumber : seatNumbers){

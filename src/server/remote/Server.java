@@ -119,7 +119,12 @@ public class Server extends UnicastRemoteObject implements ServerRemote {
     @Override
     public void reserveSeats(int[] seatNumbers, int eventID) throws RemoteException {
         if(mEventsRoomHandler.containsKey(eventID)){
-            mEventsRoomHandler.get(eventID).reserveSeats(seatNumbers);
+            try {
+                ClientRemote clientRequest = mClientHandler.getClient(getClientHost());
+                mEventsRoomHandler.get(eventID).reserveSeats(seatNumbers, clientRequest);
+            } catch (ServerNotActiveException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             System.out.println("El evento no esta disponible");
         }                     
