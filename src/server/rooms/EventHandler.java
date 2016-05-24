@@ -169,7 +169,8 @@ public class EventHandler {
                 System.out.println("Notifying client " + client);
                 client.updateSeatsState(newStates);
             } catch (RemoteException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("Cannot notfy client " + client);
+                //Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
