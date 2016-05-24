@@ -172,6 +172,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
                             return;
                         } else {
                             SessionControl.getInstance().setFreeSeat(seatNumber);
+                            mController.onSeatUnselected();
                         }
                     }
                 }
