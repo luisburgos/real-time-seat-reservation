@@ -166,7 +166,7 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
                         System.out.println("Trying to change RESERVED to FREE");
                         boolean isReservedFromHere = SessionControl
                                                 .getInstance()
-                                                .isSeatNumberReserved(seatNumber);
+                                                .isSeatNumberReserved(new Integer(seatNumber));
                         if(isReservedFromHere){
                             System.out.println("Not changing because is still reserved");
                             return;

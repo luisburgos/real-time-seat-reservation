@@ -11,6 +11,7 @@ import client.ui.buttons.SeatButton;
 import client.ui.buttons.ButtonStates;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  *
@@ -124,10 +125,11 @@ public class SessionControl {
         //for(int seat : selectedSeatNumbers){
         for(Integer seat : seatIndexSelection){
             System.out.println("Comparing " + seat + " and " + seatNumber);
-            if(seat == seatNumber){
+            if(Objects.equals(seat, seatNumber)){
                 isReserved = true;
                 break;
             }
+            System.out.println("Is reserved here: " + isReserved);
         }
         return isReserved;
     }
