@@ -24,7 +24,7 @@ public class DetailWindowController implements SeatPurchaseListener {
     private int[] purchasedSeats;
     
     public DetailWindowController(DetailWindow detailWindow) {
-        detailWindow = detailWindow;
+        this.detailWindow = detailWindow;
         try {
             SeatReservationClient.getInstance().setSeatPurchaseListener(this);
         } catch (RemoteException ex) {
@@ -43,13 +43,12 @@ public class DetailWindowController implements SeatPurchaseListener {
     
     @Override
     public void onPurchaseSuccess() {
-        detailWindow.setVisible(false);
-        JOptionPane.showMessageDialog(detailWindow, "La compra ha sido exitosa");
+        detailWindow.closeWithSuccess();        
     }
 
     @Override
     public void onPurchaseFailure() {
-       JOptionPane.showMessageDialog(detailWindow,"Ha ocurrido un error con la compra");
+        detailWindow.closeWithFailure();
     }
     
     

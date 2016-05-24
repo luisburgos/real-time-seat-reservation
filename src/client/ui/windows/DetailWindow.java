@@ -9,6 +9,7 @@ import client.controllers.DetailWindowController;
 import client.controllers.SessionControl;
 import client.remote.SeatReservationClient;
 import client.ui.buttons.SeatButton;
+import client.utils.AppConstants;
 import javax.swing.*;
 import javax.swing.table.TableModel;
 
@@ -18,10 +19,9 @@ import javax.swing.table.TableModel;
  */
 public class DetailWindow extends javax.swing.JFrame {
     
-    DetailWindowController controller;
-    
-    int[] selectedButtons;
-    int eventId;
+    private DetailWindowController controller;    
+    private int[] selectedButtons;
+    private int eventId;
     
     /**
      * Creates new form DetailWindow
@@ -190,4 +190,36 @@ public class DetailWindow extends javax.swing.JFrame {
     private javax.swing.JTable detailTable;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
+    public void closeWithSuccess() {        
+        System.out.println("Compra exitosa");                    
+        Thread t = new Thread(new Runnable(){
+            public void run(){
+                JOptionPane.showMessageDialog(null,
+                    "La compra ha sido exitosa",
+                    "Éxito!",
+                    JOptionPane.INFORMATION_MESSAGE           
+            ); 
+            }
+        });
+        t.start();
+        System.out.println("After option pane");
+        this.setVisible(false);
+    }
+
+    public void closeWithFailure() {
+        System.out.println("Compra fallida");        
+        Thread t = new Thread(new Runnable(){
+            public void run(){
+                JOptionPane.showMessageDialog(null,
+                    "Ha ocurrido un error con la compra",
+                    "Error!",
+                    JOptionPane.ERROR_MESSAGE
+            ); 
+            }
+        });
+        t.start();
+        System.out.println("After option pane");
+        this.setVisible(false);
+    }
 }

@@ -32,4 +32,8 @@ public class ClientsHandler {
         clientsMap.remove(clientKey, client);                                       
     }
     
+    public ClientRemote getClient(String key){
+        return clientsMap.get(key);
+    }
+    
 }

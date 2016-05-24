@@ -146,8 +146,13 @@ public class ButtonSelectWindow extends javax.swing.JFrame implements SeatButton
     public void updateSeat(Integer seatNumber, String newState) {
         if(seatNumber > 0){
             if(newState.equalsIgnoreCase(ButtonStates.FREE)){
-            SessionControl.getInstance().setFreeSeat(seatNumber);
+                SessionControl.getInstance().setFreeSeat(seatNumber);
             }
+            
+            if(newState.equalsIgnoreCase(ButtonStates.SOLD)){
+                SessionControl.getInstance().setFreeSeat(seatNumber);
+            }
+            
             System.out.println("Update seat " + seatNumber + " with value " + newState);                
             Component component = buttonPanel.getComponent(seatNumber-1);
             if(component instanceof SeatButton){                      

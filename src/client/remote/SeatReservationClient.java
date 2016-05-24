@@ -48,6 +48,13 @@ public class SeatReservationClient extends UnicastRemoteObject implements Client
             purchaseListener.onPurchaseSuccess();
         }
     }
+
+     @Override
+    public void notifyPurchaseFailure() throws RemoteException {
+        if(purchaseListener != null){
+            purchaseListener.onPurchaseFailure();
+        }
+    }
     
     public void selectSeat(int seatNumber, int eventID) {
         try {

@@ -126,17 +126,19 @@ public class EventHandler {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void buySeats(int[] seatNumbers) {
+    public void buySeats(int[] seatNumbers, ClientRemote client) {
         SeatsRepository rep = new SeatsRepository();       
         for (int seatNumber : seatNumbers) {
             if(seatNumber > 0){
-                try {
-                    rep.update(new Seat(eventID, ButtonStates.SOLD, seatNumber));
-                    seats.replace(seatNumber, ButtonStates.SOLD);
-                    notifyClients(seatNumber, ButtonStates.SOLD);
-                } catch(Exception e){
-                    System.out.println("No se pudo completar la compra.\n" + e.getMessage());
+                rep.update(new Seat(eventID, ButtonStates.SOLD, seatNumber));
+                seats.replace(seatNumber, ButtonStates.SOLD);        
+                try {                                       
+                    client.notifyPurchaseSuccesful();                   
+                } catch(RemoteException e){
+                    e.printStackTrace();
+                    System.out.println("No se pudo completar la compra. " + e.getMessage());
                 }
+                notifyClients(seatNumber, ButtonStates.SOLD);
             }            
         }
     }
