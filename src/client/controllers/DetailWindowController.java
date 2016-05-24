@@ -43,11 +43,13 @@ public class DetailWindowController implements SeatPurchaseListener {
     
     @Override
     public void onPurchaseSuccess() {
+        SessionControl.getInstance().clearSelectedSeats();
         detailWindow.closeWithSuccess();        
     }
 
     @Override
     public void onPurchaseFailure() {
+        SessionControl.getInstance().clearSelectedSeats();        
         detailWindow.closeWithFailure();
     }
 
