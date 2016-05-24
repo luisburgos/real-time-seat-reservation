@@ -132,9 +132,8 @@ public class EventHandler {
                     }
                     notifyClients(seatIndex, ButtonStates.FREE);
                 }
-            }));          
-            //cancelSelection(seatNumber);
-            runningThreads.replace(seatNumber, future);
+            }));                      
+            runningThreads.put(seatNumber, future);
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -193,7 +192,7 @@ public class EventHandler {
     }
 
     public void cancelReservation(int[] seatNumbers) {
-        Future current;
+        Future current;        
         for(int seatNumber : seatNumbers){
             if(seatNumber > 0){
                 System.out.println("Cancelling seat reservation of " + seatNumber);

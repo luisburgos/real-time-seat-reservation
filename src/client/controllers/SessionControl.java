@@ -39,6 +39,10 @@ public class SessionControl {
                 amountSelected);
     }      
     
+    /**
+     * Deprecated, not using.
+     * @param seat 
+     */
     public void reserveSeat(SeatButton seat){
         if(amountReserved >= MAX_SIZE){
             amountReserved = 0;
@@ -99,6 +103,10 @@ public class SessionControl {
             }
         }
         return isReserved;
+    }
+
+    public void clearSelectedSeats() {
+        selectedSeatNumbers = new int[MAX_SIZE];
     }
     
 }

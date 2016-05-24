@@ -6,6 +6,7 @@
 package client.ui.windows;
 
 import client.controllers.DetailWindowController;
+import client.controllers.SessionControl;
 import javax.swing.*;
 import javax.swing.table.TableModel;
 
@@ -115,7 +116,7 @@ public class DetailWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-       controller.cancelReservedSeats(eventId);      
+       controller.cancelReservedSeats(selectedButtons, eventId);      
        this.setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
@@ -188,8 +189,7 @@ public class DetailWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
-    public void closeWithSuccess() {        
-        System.out.println("Compra exitosa");                    
+    public void closeWithSuccess() {                                    
         Thread t = new Thread(new Runnable(){
             public void run(){
                 JOptionPane.showMessageDialog(null,
@@ -199,24 +199,22 @@ public class DetailWindow extends javax.swing.JFrame {
             ); 
             }
         });
-        t.start();
-        System.out.println("After option pane");
+        t.start();        
         this.setVisible(false);
     }
 
     public void closeWithFailure() {
-        System.out.println("Compra fallida");        
+        System.out.println("No comprado");             
         Thread t = new Thread(new Runnable(){
             public void run(){
                 JOptionPane.showMessageDialog(null,
-                    "Ha ocurrido un error con la compra",
-                    "Error!",
-                    JOptionPane.ERROR_MESSAGE
-            ); 
+                    "No se ha realizado la compra",
+                    "Lo sentimos!",
+                    JOptionPane.INFORMATION_MESSAGE
+                ); 
             }
         });
-        t.start();
-        System.out.println("After option pane");
+        t.start();        
         this.setVisible(false);
     }
 }

@@ -51,11 +51,13 @@ public class DetailWindowController implements SeatPurchaseListener {
         detailWindow.closeWithFailure();
     }
 
-    public void cancelReservedSeats(int eventId) {        
+    public void cancelReservedSeats(int[] reservedSeats, int eventId) {        
+        this.reservedSeats = reservedSeats;
         try {
+            SessionControl.getInstance().clearSelectedSeats();
             SeatReservationClient
                     .getInstance()
-                    .cancelReservations(reservedSeats, eventId);
+                    .cancelReservations(reservedSeats, eventId);           
         } catch (RemoteException ex) {
             Logger.getLogger(ButtonSelectWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
